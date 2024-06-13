@@ -38,6 +38,7 @@ body {
     border-radius: 0px 0px 5px 0px;
     justify-content: space-between;
   }
+  
   .contacts i span{
     margin:0px 20px 0px 0px;
   }
@@ -395,7 +396,7 @@ display:flex;
 }
 @keyframes changeColor {
   0% { color: rgb(255, 255, 255); }
-  100% { color: blue; }
+  100% { color: rgb(92, 92, 92); }
 }
 .directMessages{
   animation: flash 1s infinite alternate, changeColor 1s infinite;
@@ -454,6 +455,22 @@ margin-top: -55px
   font-size: 12px;
   display: block;
 }
+.navbar-toggler{
+  background-color: #e9e4e0;
+}
+.navbar-nav{
+  justify-content: space-around;
+  line-height: .025em;
+}
+ul li .btn-primary{
+background-color: unset;
+border: unset;
+font-size: large;
+}
+
+ul .nav-item{
+  line-height: .05em;
+}
 .navbarNav div{
   justify-content: space-between;
 }
@@ -469,7 +486,6 @@ padding: auto;
 }
 .dm_occ{
   display: flex;
-  margin-top: 20px;
   justify-content: space-between;
 }
 .d_occ p{
@@ -503,7 +519,11 @@ padding: auto;
   .bio-container{
     width: 100%;
   }
-  
+  .navbarNav div{
+    justify-content: space-between;
+    background-color: #474545;
+    position: absolute;
+  }
   .nav_header{
     top: 0;
     left: 0;
@@ -615,7 +635,11 @@ padding: auto;
     display: flex;
     width: 100%;
   }
-  
+  .navbarNav div{
+    justify-content: space-between;
+    background-color: #474545;
+    position: absolute;
+  }
   .login-form{
     margin-top: 60px;
 

@@ -3,6 +3,27 @@
 {% block buttons %}
   <ul class="navbar-nav ml-auto">
     <li class="nav-item p-2">
+      <a 
+       name=""
+       type="buttton"
+       class="btn btn-primary"
+       href="#"
+      >
+       <i class="fas fa-home"></i>
+       Home
+      </a>
+     </li>
+     <li class="nav-item p-2">
+       <a
+       name=""
+       type="button"
+       class="btn btn-primary"
+       href="{{ url_for('loadmessages') }}"
+       ><i class="fas fa-envelope directMessages"></i> Direct
+       Messages</a
+     >
+     </li>
+    <li class="nav-item p-2">
       <a class="btn btn-primary" href="{{ url_for('userProfile') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
     </li>
     <li class="nav-item p-2">

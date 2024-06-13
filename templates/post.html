@@ -1,12 +1,33 @@
 {% extends "base.html" %} {% block buttons %}
 <ul class="navbar-nav ml-auto">
   <li class="nav-item p-2">
+   <a 
+    name=""
+    type="buttton"
+    class="btn btn-primary"
+    href="#"
+   >
+    <i class="fas fa-home"></i>
+    Home
+   </a>
+  </li>
+  <li class="nav-item p-2">
+    <a
+    name=""
+    type="button"
+    class="btn btn-primary"
+    href="{{ url_for('loadmessages') }}"
+    ><i class="fas fa-envelope directMessages"></i> Direct
+    Messages</a
+  >
+  </li>
+  <li class="nav-item p-2">
     <a
       name="createPost_{{ user.user_id }}"
       type="button"
       class="btn btn-primary"
       href="{{ url_for('createNewPost') }}"
-    >
+    ><i class="fas fa-user-plus"></i>
       Create Post
     </a>
   </li>
@@ -14,7 +35,7 @@
     <a
       type="button"
       name="logout"
-      class="btn btn-primary"
+      class="logout btn btn-primary"
       href="{{url_for('logout')}}"
       ><i class="fas fa-sign-out-alt"></i>
       Log-out
@@ -52,10 +73,7 @@
               </h4>
             </div>
             <div class="col-md-5 dm_occ">
-              <a href="{{ url_for('loadmessages') }}"
-                ><i class="fas fa-envelope directMessages"></i> Direct
-                Messages</a
-              >
+             
               <p>Occupation: {{ user.occupation }}</p>
             </div>
           </div>
