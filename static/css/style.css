@@ -1,0 +1,743 @@
+body {
+    font-family:'Inter';
+    padding: 10px;
+    margin: 10px;
+    background-color: #e9e4e0;
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style:  normal;
+    font-weight: 100;
+    font-display: swap;
+    src: url("Inter-Thin.woff2?v=3.19") format("woff2"),
+         url("Inter-Thin.woff?v=3.19") format("woff");
+  }
+  
+  .top-nav {
+    background-color:white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 15vh;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 12px;
+    border-radius: 0px 0px 5px 0px;
+  }
+  .top-nav .logo {
+    color: white;
+  }
+  .contacts{
+    background-color:white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    height: 15vh;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 12px;
+    border-radius: 0px 0px 5px 0px;
+    justify-content: space-between;
+  }
+  .contacts i span{
+    margin:0px 20px 0px 0px;
+  }
+  .top-nav .nav-icons div {
+    margin-right: 20px;
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 10px;
+  }
+  
+  .nav_header{
+    background-color: rgb(255, 255, 255);
+  }
+  .header {
+    margin-top: 5%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  .header .content-posts{
+    justify-content: space-evenly;
+  }
+  .edit-profile{
+    margin-top: 20%;
+  }
+  .card{
+    margin-top: 15%;
+    border-radius:15px;
+  }
+  
+.nav_header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+  padding: 0;
+}
+.content-div{
+  overflow: auto;
+  width: 50%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5%;
+}
+/*Login page styling below*/
+.clearfix {
+  display: flex;
+  justify-content: space-between;
+}
+
+.clearfix label i {
+  font-style: italic;
+}
+
+.login-form {
+    width: 300px;
+    margin: 20% auto;
+  }
+  .login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .login-form input[type="email"],
+  .login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .login-form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+  }
+  .login-form button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  .login-form .clearfix {
+    margin-top: 20px;
+  }
+  .login-form .clearfix label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  .login-form .clearfix label a {
+    color: #007bff;
+  }
+
+  /*styling for Post page and Profile content div*/
+  /* Style for the like-comment-share section */
+  .like-comment-share {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+}
+.container .share-like-comment{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style for the share buttons */
+.btn-like-comment-share {
+    margin-right: 10px;
+}
+
+/* Style for the share-icons section */
+.share-icons {
+    margin-top: 10px;
+}
+
+/* Style for individual share icons */
+.share-icons a {
+    display: block;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #333; 
+}
+.content-posts{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.content-container {
+  margin: 0 auto; /* Center the card horizontally */
+  width: max-content; /* Adjust the width as needed */
+  margin-top: 10%; /* Add top margin to push it down */
+}
+.swiper-wrapper{
+  width: max-content;
+}
+.swiper {
+  text-align: center; /* Center the swiper content */
+  width: 100%;
+}
+.no-increase {
+  padding: 0.375rem 0.75rem; 
+  transition: none; 
+  height: 2.5em;
+}
+.specific_user{
+display:flex;
+}
+.comment_div {
+  max-height: 200px; /* Set a maximum height to enable scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+.comments_outer_div {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+.container{
+  padding:20px;
+  margin: 0;
+}
+
+/* Style for individual comment */
+.comment_div {
+  margin-bottom: 20px;
+}
+
+/* Style for comment text */
+.comments_ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.comments_ul li {
+  margin-bottom: 10px;
+}
+
+/* Style for comment heading */
+.comments_ul li h6 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  color: #333;
+}
+
+/* Style for comment content */
+.comments_ul li p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+.share-links-container {
+  display: flex; 
+  margin-top: 10px; 
+  display: flex;
+}
+.share-icons{
+  display: flex;
+}
+
+.share-link {
+  margin-right: 10px; 
+  text-decoration: none; 
+}
+.facebook i,.twitter i,.linkedin i{
+  color: blue;
+}
+.whatsapp i{
+  color: green;
+}
+.conclude{
+  background-color:#000000;
+    width: 100%;
+    height: 50vh;
+   margin-top: 0px;
+    position: relative; /* Set position to relative */
+    display: flex;
+}
+.deco_container {
+    background-color: #c7bbbb;
+    width: 100%;
+    height: 60vh;
+    border: #007bff;
+    position: fixed;
+    bottom: 0; /* Set top distance from the top of .conclude */
+    display: flex;
+    background-image: linear-gradient(rgba(6, 0, 8, 0.7), rgba(0, 0, 0, 0.7)), url(./images/5555555555Artifictelligence\ ...wnload\ -\ Pngtree_animation.gif);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.contacts div{
+  margin:10px ;
+  display: flex;
+}
+.contacts{
+  width: max-content;
+  display: flex;
+  height: max-content;
+}
+.contacts img{
+  width: 40px;
+}
+.logo_img img{
+  height:max-content;
+  width:150px;
+  float: left;
+}
+.menuList{
+  display: flex;
+}
+.read-more {
+  display: none;
+}
+.bio-container{
+  height: min-content;
+  border-radius: 15px;
+  width: 300px;
+  background-color: #f0f0f0;
+  padding: 20px;
+  display: flex; 
+  flex-direction: column;
+  margin-top:13% ;
+}
+
+.swiper-slide {
+  width: 493.6px; /* Double the width */
+  height: 300px; /* Double the height */
+  position: relative;
+  overflow: hidden;
+  margin:auto 35px;
+}
+
+.swiper-slide video, .swiper-slide img {
+  width: 100%; /* Double the width of the video or image */
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.index_container{
+  align-content: center;
+  text-align: center;
+  margin-top: 20%;
+}
+.swiper-wraper{
+  margin: auto 15px;
+}
+.swiper-button-next, .swiper-rtl .swiper-button-prev {
+  right: 0;
+  left: auto;
+}
+.editcart{
+  width: 50%;
+}
+.contacts div img{
+  width:50px;
+  height: 50px;
+  padding: 0;
+  margin: 0;
+}
+.container{
+  padding: 0;
+}
+ .contacts div{
+  display:flex;
+  margin-top: 20px;
+}
+.contacts div p{
+  margin-top: 15px;
+}
+.bar{
+  background-color: rgb(74, 74, 74);
+  height:70px;
+  color: white;
+}
+.indexbar{
+  margin-bottom: 10%;
+}
+
+.datePosted{
+  color: rgb(103, 103, 103);
+  font-size: 12px;
+}
+.scrollable-container {
+  width: 100%; /* Set the width of the container */
+  overflow-x: scroll; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent line breaks */
+}
+.scrollable-content {
+  display: inline-block; /* Make the content inline */
+  /* Optionally, set the width of each item */
+  /* width: 200px; */
+  /* Adjust other styles as needed */
+  padding: 10px;
+  margin-right: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.messages li p{
+  color: rgb(103, 103, 103);
+  font-size: 12px;
+}
+@keyframes flash {
+  0% { opacity: 1; }
+  100% { opacity: 1; }
+}
+@keyframes changeColor {
+  0% { color: rgb(255, 255, 255); }
+  100% { color: blue; }
+}
+.directMessages{
+  animation: flash 1s infinite alternate, changeColor 1s infinite;
+  text-decoration: none;
+}
+
+.messages ul{
+  list-style-type: none;
+}
+.menuList{
+  display: flex;
+}
+.editProfileButtons{
+  display: flex;
+  justify-content: space-around;
+}
+.gradient-div {
+  width: 200px;
+  height: 80px;
+  font-size:20px ;
+  background: linear-gradient(to top left, #dfdfdf, #f0f0f0, #dfdfdf);
+  border-radius: 10px;
+  margin: 20px;
+  padding-top: 15px;
+  text-align: center;
+  box-shadow:5px 5px 5px 5px rgba(133, 133, 133, 0.25);
+}
+.gradient-div:hover{
+  box-shadow:5px 5px 5px 5px rgba(0, 0, 0, 0.25);
+  font-weight: bold;
+}
+.category{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.listcategory{
+  text-align: center;
+}
+.image_border{
+display: flex;
+color: white;
+width: 100%;
+margin-top: -55px
+}
+.image_border h4 a{
+  margin-top: -15px;
+}
+.image_border h4 a,.image_border h4 a i{
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  text-decoration: none;
+}
+.image_border h4 a i{
+  font-size: 12px;
+  display: block;
+}
+.navbarNav div{
+  justify-content: space-between;
+}
+.navbarNav div h5{
+font-weight: bold;
+padding: auto;
+}
+.image_border img{
+  border:5px solid #f0f0f0;
+  margin:0 5px 0 1px;
+  width: 150px;
+  position: relative;
+}
+.dm_occ{
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+.d_occ p{
+  display: flex;
+  flex-wrap: wrap;
+  
+}
+.dm_occ a{
+  margin-right: 15px;
+}
+.box{
+  background-color: #474545;
+  height: 90px;
+  width: 100%;
+  border-radius: 15px 15px 0 0;
+}
+.image_user_infor{
+  display: block;
+}
+@media only screen and (max-width:320px) {
+  .logo_img{
+    display: none;
+  }
+  .editcart{
+    width: 100%;
+  }
+  .content-div{
+    width: 7cap;
+    margin-top: 15%;
+  }
+  .bio-container{
+    width: 100%;
+  }
+  
+  .nav_header{
+    top: 0;
+    left: 0;
+    position: unset;
+    width: 100%;
+    padding: 0;
+  }
+  
+  .image_border h4 a,.image_border h4 a i{
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    text-decoration: none;
+  }
+  .edit-profile{
+    margin-top: 0;
+  }
+  .menuList{
+    display: block;
+    width: max-content;
+  }
+  .category{
+    width:100% ;
+  }
+  .category button{
+    border: none;
+  }
+  .image_border img{
+    width: 150px;
+    border: 5px solid white;
+  }
+  .image_border{
+    width: 100%;
+  }
+  .image_user_infor {
+    display: flex;
+    width: 100%;
+  }
+   
+  .login-form{
+    margin-top: 60px;
+  }
+  .create-account {
+    margin-top: 60%;
+  }
+  .contacts{
+    width: 100%;
+    display: block;
+    height: max-content;
+  }
+  .contacts div img{
+    width:30px;
+    height: 30px;
+    padding:auto;
+    margin-top: 10px;
+  }
+
+  .contacts div p{
+    display:flex;
+  }
+  .content-container{
+    width: max-content;
+  }
+  .text-center{
+    display: flex;
+  }
+}
+@media only screen and (max-width:450px) {
+  .logo_img{
+    display: none;
+  }
+  .nav_header{
+    top: 0;
+    left: 0;
+    position: unset;
+    background-image: url("../static/images/logo 5.png");
+    width: 100%;
+    padding: 0;
+  }
+  .content-div{
+    width: 100%;
+  }
+  .editcart{
+    width: 100%;
+  }
+  .image_border h4 a,.image_border h4 a i{
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    text-decoration: none;
+  }
+  .menuList{
+    display: block;
+    width: max-content;
+  }
+  .edit-profile{
+    margin-top: 0;
+  }
+  .image_border img{
+    width: 150px;
+  }
+  .image_border{
+    width: 100%;
+  }
+  .card{
+    border-radius:15px;
+  }
+  .image_user_infor {
+    display: flex;
+    width: 100%;
+  }
+  
+  .login-form{
+    margin-top: 60px;
+
+  }
+  .create-account {
+    margin-top: 60%;
+  }
+  .logo_img img{
+    height: 60px;
+    width: 75px;
+  }
+  .contacts{
+    width: 100%;
+    display: block;
+    height: max-content;
+  }
+  .contacts div img{
+    width:30px;
+    height: 30px;
+    padding:auto;
+    margin-top: 10px;
+  }
+  .contacts div p{
+    display:flex;
+  }
+  .content-container{
+    width: max-content;
+  }
+  .text-center{
+    display: flex;
+  }
+  
+}
+
+@media only screen and (max-width:800px) {
+  .logo_img{
+    display: none;
+  }
+  .index_container{
+     margin-top: 15%;
+  }
+  .nav_header{
+    top: 0;
+    left: 0;
+    position: unset;
+    width: 100%;
+    padding: 0;
+  }
+  .image_border h4 a,.image_border h4 a i{
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    text-decoration: none;
+  }
+  .menuList{
+    display: block;
+    width: max-content;
+  }
+  .card{
+    border-radius:15px;
+  }
+  .editcart{
+    width: 100%;
+  }
+  .edit-profile{
+    margin-top: 10%;
+  }
+  .image_border img{
+    width: 150px;
+  }
+  .image_border{
+    width: 100%;
+  }
+  .image_user_infor {
+    display: flex;
+    width: 100%;
+  }
+  
+  .login-form{
+    margin-top: 60px;
+
+  }
+  .create-account {
+    margin-top: 60%;
+  }
+  .logo_img img{
+    height: 60px;
+    width: 75px;
+  }
+  .contacts{
+    width: 100%;
+    display: block;
+    height: max-content;
+  }
+  .contacts div img{
+    width:30px;
+    height: 30px;
+    padding:auto;
+    margin-top: 10px;
+  }
+  .contacts div p{
+    display:flex;
+  }
+  .content-container{
+    width: max-content;
+  }
+  .text-center{
+    display: flex;
+  }
+}
+
+@media only screen and (max-width:1024px) {
+.index_container{
+  margin-top: 25%;
+}
+.card{
+  border-radius:15px;
+}
+.image_border h4 a,.image_border h4 a i{
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  text-decoration: none;
+}
+}
