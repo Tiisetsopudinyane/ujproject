@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block buttons %}
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
+    </li>
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+    </li>
+  </ul>
+{% endblock buttons %}
+
+{% block content %}
+<br><br><br>
+<div class="row">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card form-container">
+          <div class="card-header text-center">
+            <h3>Add Post</h3>
+          </div>
+          <div class="card-body">
+            <form  method="post" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <div class="mb-3">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                      <select class="form-select" name="title" aria-label="title" required>
+                        <option selected disabled>Choose a category as title</option>
+                        <option value="agriculture">Agriculture</option>
+                        <option value="healthcare">HealthCare</option>
+                        <option value="technology">Technology</option>
+                        <option value="energy">Energy</option>
+                        <option value="education">Education</option>
+                        <option value="manufacture">Manufacture</option>
+                        <option value="finance">Finance</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="environment">Environment</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea class="form-control" id="description" name="description" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="media" class="form-label">Upload Images or Videos:</label>
+                <input type="file" class="form-control" id="media" name="media[]" accept="image/*, video/*" multiple required>
+                <small>(You can select multiple files by holding down the Ctrl or Shift key while selecting)</small>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-5"></div>
+{% endblock content %}

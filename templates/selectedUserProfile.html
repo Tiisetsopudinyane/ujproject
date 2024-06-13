@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block buttons %}
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
+    </li>
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+    </li>
+  </ul>
+{% endblock buttons %}
+{%block content%}
+<br><br><br><br>
+<div class="row mt-5">
+    <div class="container content-div specific_user mt-5">
+        <div class="col-md-8 card mt-4 content-container">
+            <div class="card-header">
+                <h2 class="card-title">User Information</h2>
+            </div>
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {% if not user['images'] %}
+                            <img
+                              src="../static/images/user.png"
+                              class="img-fluid rounded-circle mb-3"
+                              alt="User Image"
+                            />
+                            {% else %}
+                            <img
+                              src="../{{user.images}}"
+                              class="img-fluid rounded-circle mb-3"
+                              alt="User Image"
+                            />
+                            {% endif %}            
+                        </div>
+                        <div class="col-md-6 conatiner">
+                            <p><strong>Full Name:</strong> {{ user.first_name }} {{ user.surname }}</p>
+                            <p><strong>Occupation:</strong> {{ user.occupation }}</p>
+                            <p><strong>Gender:</strong> {{ user.gender }}</p>
+                            <p><strong>Email:</strong><a href="mailto:{{ user.email }}"> {{ user.email }}</a></p>
+                            <p><strong>Bio:</strong> {{ user.bio }}</p>
+                            <p><strong>Contact Detail:</strong> {{ user.contact_detail }}</p>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 card mt-4 content-container">
+            <div class="card-header">
+                <h2 class="card-title">Send a Message</h2>
+            </div>
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                            <form action="/selectedUserProfile/{{user.userId}}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="form-group">
+                                    <label for="message">Message:</label>
+                                    <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary">Send Message</button>
+                            </form>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="mt-5 indexbar" ></div>
+{%endblock%}
