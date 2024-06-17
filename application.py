@@ -4,7 +4,7 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,decrease_like_count,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 import base64
 import io
 from PIL import Image
@@ -57,40 +57,40 @@ port = int(os.environ.get('FLASK_RUN_PORT', 8000))
 
 def homePage():
     
-    return render_template("login.html")    
-    
+    return render_template("login.html") 
 
+   
+@app.route("/deleteProfile_picture",methods=["POST","GET"])
+def deleteProfile_picture():
+    userId=session["user_id"]
+    
+    delete_profile_picture(userId)
+    return redirect(url_for("post"))
+    
+    
 @app.route("/post")
 def post():
+    counts=countPosts()
+    campaigns = select_all_campaigns()
+    print(counts)
     if 'user_id' not in session:
         return render_template("login.html")
     
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
-    return render_template("post.html",user=userdata,profileimage=profileimage)
+    return render_template("post.html",counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
 
-@app.route("/count")
-def countPosts():
-    cat_list=[]
-    agric_count=countPosts("agriculture")
-    health_count=countPosts("healthcare")
-    teach_count=countPosts("technology")
-    enrgy_count=countPosts("energy")
-    edu_count=countPosts("education")
-    manu_count=countPosts("manufacturing")
-    finance_count=countPosts("finance")
-    trans_count=countPosts("transport")
-    envir_count=countPosts("environment")
-    retail_count=countPosts("retail")
     
 @app.route("/loadposts/<string:name>",methods=["GET"])
 def loadposts(name):
     posts=loadPosts(name)
+    print(posts)
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
     media=[]
+    
     if "message" not in posts:
         for item in posts:
             
@@ -107,29 +107,51 @@ def loadposts(name):
         return redirect(url_for("post"))
 
 
+@app.route('/update_campaign', methods=['GET', 'POST'])
+def update_campaign():
+    if request.method == 'POST':
+        subject = request.form['subject']
+        overview = request.form['overview']
+        funding_goal = request.form['funding_goal']
+        duration = request.form['duration']
+        description = request.form['description']
+        
+        # Here you would add logic to update the campaign information in the database
+        # For example:
+        update_campaign(subject, overview, funding_goal, duration, description)
+        
+        return redirect(url_for('post'))
+    
+    return render_template('update_campaign.html')
+
 @app.route("/loadmessages")
 def loadmessages():
     userId=session["user_id"]
-    sender=selectAllmessages(userId)
-    return render_template("inbox.html",sender=sender)
+    messages=selectAllmessages(userId)
+    print(messages)
+    return render_template("inbox.html",messages=messages)
     
 
 
 
-@app.route("/selectedUserProfile/<int:user_id>", methods=["POST","GET"])
+@app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
 def selectedUserProfile(user_id):
-    user=selectAllfromUser_with_Id(user_id)
-    userId=session["user_id"]
-    senderdata=selectAllfromUser_with_Id(userId)
-    
-    senderId=senderdata['userId']
-    if request.method=="POST":
-        message=request.form.get('message')
-        insertMessages(senderId, user_id, message)
+    user = selectAllfromUser_with_Id(user_id)
+    sender_id = session.get("user_id")  # Using .get() to avoid KeyError if "user_id" is not in session
+    sender_data = selectAllfromUser_with_Id(sender_id)
+    reply_to = request.args.get("reply_to")  # If "reply_to" is sent in the form, it means it's a reply
+    print(reply_to)
+    if request.method == "POST":
+        message = request.form.get("message")
+        
+        if reply_to:  # Check if it's a reply
+            insertreplyMessages(sender_id, user_id, message, reply_to)
+        else:
+            insertMessages(sender_id, user_id, message)
         return redirect(url_for("post"))
     
-    return render_template("selectedUserProfile.html",user=user)
-   
+    return render_template("selectedUserProfile.html",sender_id=sender_id, user=user, sender_data=sender_data)
+
 
 @app.route("/login",methods=["POST","GET"])
 def login():
@@ -141,12 +163,15 @@ def login():
         password=encryptdata(password.strip())
         
         user_credentials= loginCredentials(email,password)
-        
+        counts=countPosts()
+        print(counts)
+        campaigns = select_all_campaigns()
+        # counts=jsonify(counts)
         user=selectAllfromUser(email)
         media=[]
         if user_credentials:
             session["user_id"]=user['userId']
-            return render_template("post.html",user=user,media=media)
+            return render_template("post.html",counts=counts,campaigns=campaigns,user=user,media=media)
              
     return render_template("login.html")
 
@@ -209,11 +234,12 @@ def createAccount():
                 
             password=encryptdata(password.strip())
             insertUserIntodb( firstName, lastName, dob, gender, email, occupation,bio, contact, address, postalCode, password)
-
+            counts=countPosts()
+            campaigns = select_all_campaigns()
             user=selectAllfromUser(email)
             if 'userId' in user:
                 session["user_id"]=user['userId']
-                return render_template("post.html",user=user)
+                return render_template("post.html",counts=counts,campaigns=campaigns,user=user)
         else:
             return render_template("createAccount.html")
 
@@ -245,8 +271,10 @@ def userProfile():
     userdata=selectAllfromUser_with_Id(userId)
     user=selectUserInfo()
     userPosts=get_post(userId)
+    counts=countPosts()
+    campaigns = select_all_campaigns()
     if request.method=='POST':
-        return render_template('post.html',user=user)
+        return render_template('post.html',counts=counts,campaigns=campaigns,user=user)
     else:
         media=[]
         
@@ -346,6 +374,7 @@ def share(postid):
     post_content=sharing(postid)
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
+    insert_share(postid, userId)
     profileimage = userdata['images']
 
     return jsonify(post_content)
@@ -429,7 +458,7 @@ def updateUser():
     if image.filename:
         image_=profile_image(image)
         insertImage(user_id,image_)
-        post=loadPosts()
+        # post=loadPosts()
     return redirect(url_for('post'))
         
 @app.route('/createPost')

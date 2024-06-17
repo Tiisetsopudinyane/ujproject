@@ -3,6 +3,7 @@ body {
     padding: 10px;
     margin: 10px;
     background-color: #e9e4e0;
+    justify-content: space-evenly;
   }
   @font-face {
     font-family: 'Inter';
@@ -38,7 +39,11 @@ body {
     border-radius: 0px 0px 5px 0px;
     justify-content: space-between;
   }
-  
+  .gradient-div span{
+    color:rgb(60, 60, 60);
+    font-weight: bold;
+    font-size: 20px;
+  }
   .contacts i span{
     margin:0px 20px 0px 0px;
   }
@@ -134,7 +139,17 @@ body {
   .login-form .clearfix label a {
     color: #007bff;
   }
-
+.card-edit{
+  width:600px;
+}
+.fixed-width-card {
+    width: 100%; /* You can set a fixed width like 300px or use 100% for responsive width */
+    max-width: 600px; /* Set a max-width to control the growth */
+    margin: 0 auto; /* Center the card horizontally */
+  }
+.ProfileEditButtons{
+  width: 100%;
+}
   /*styling for Post page and Profile content div*/
   /* Style for the like-comment-share section */
   .like-comment-share {
@@ -202,8 +217,10 @@ display:flex;
   margin-top: 20px;
 }
 .container{
-  padding:20px;
-  margin: 0;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
 }
 
 /* Style for individual comment */
@@ -523,6 +540,7 @@ padding: auto;
     justify-content: space-between;
     background-color: #474545;
     position: absolute;
+    z-index: 10; 
   }
   .nav_header{
     top: 0;
@@ -554,6 +572,8 @@ padding: auto;
   .image_border img{
     width: 150px;
     border: 5px solid white;
+    position: relative;
+    z-index: 1;
   }
   .image_border{
     width: 100%;
@@ -622,8 +642,12 @@ padding: auto;
   .edit-profile{
     margin-top: 0;
   }
+  
   .image_border img{
     width: 150px;
+    border: 5px solid white;
+    position: relative;
+    z-index: 1;
   }
   .image_border{
     width: 100%;
@@ -639,6 +663,7 @@ padding: auto;
     justify-content: space-between;
     background-color: #474545;
     position: absolute;
+    z-index: 10; 
   }
   .login-form{
     margin-top: 60px;
@@ -688,6 +713,12 @@ padding: auto;
     width: 100%;
     padding: 0;
   }
+  .navbarNav div{
+    justify-content: space-between;
+    background-color: #474545;
+    position: absolute;
+    z-index: 10; 
+  }
   .image_border h4 a,.image_border h4 a i{
     color: white;
     display: flex;
@@ -709,6 +740,9 @@ padding: auto;
   }
   .image_border img{
     width: 150px;
+    border: 5px solid white;
+    position: relative;
+    z-index: 1;
   }
   .image_border{
     width: 100%;

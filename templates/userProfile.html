@@ -1,40 +1,30 @@
 {% extends "base.html"%}
 
 {% block buttons %}
-  <ul class="navbar-nav ml-auto">
-    <li class="nav-item p-2">
-      <a 
-       name=""
-       type="buttton"
-       class="btn btn-primary"
-       href="#"
-      >
-       <i class="fas fa-home"></i>
-       Home
-      </a>
-     </li>
-     <li class="nav-item p-2">
-       <a
-       name=""
-       type="button"
-       class="btn btn-primary"
-       href="{{ url_for('loadmessages') }}"
-       ><i class="fas fa-envelope directMessages"></i> Direct
-       Messages</a
-     >
-     </li>
-    <li class="nav-item p-2">
-      <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
-    </li>
-    <li class="nav-item p-2">
-      <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
-    </li>
-  </ul>
+<ul class="navbar-nav ml-auto">
+  <li class="nav-item p-2">
+    <a name="" type="buttton" class="btn btn-primary" href="#">
+      <i class="fas fa-home"></i>
+      Home
+    </a>
+  </li>
+  <li class="nav-item p-2">
+    <a name="" type="button" class="btn btn-primary" href="{{ url_for('loadmessages') }}"><i
+        class="fas fa-envelope directMessages"></i> Direct
+      Messages</a>
+  </li>
+  <li class="nav-item p-2">
+    <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
+  </li>
+  <li class="nav-item p-2">
+    <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+  </li>
+</ul>
 {% endblock buttons %}
 {% block content%}
 
 <div class="row ">
-<div class="container">
+  <div class="container">
     <div class=" edit-profile">
       <div class="justify-content-center">
         <div class="card form-container">
@@ -42,202 +32,129 @@
             <h3>Updating Your User Details</h3>
           </div>
           <div class="card-body">
-            <form
-              action="/updateUserInfo"
-              method="POST"
-              enctype="multipart/form-data"
-            >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form action="/updateUserInfo" method="POST" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <div class="mb-3">
-                <label for="photoUpload" id="profilepic" class="form-label"
-                  >Upload Profile Picture</label
-                >
-                <input
-                  type="file"
-                  name="file"
-                  class="form-control"
-                  id="photoUpload"
-                  accept="image/*"
-                  onchange="handleFileSelect(event)"
-                />
+                <label for="photoUpload" id="profilepic" class="form-label">Upload Profile Picture</label>
+                <input type="file" name="file" class="form-control" id="photoUpload" accept="image/*"
+                  onchange="handleFileSelect(event)" />
               </div>
               <div id="imagePreview" class="mb-3">
-                <label>Preview:</label>
-                <img style="width:127px;"
-                  id="previewImage"
-                  src="{{userdata.images}}"
-                  class="img-fluid rounded"
-                  alt="Preview"
-                />
+                <label>Preview:</label><br>
+                <img style="width:127px;" id="previewImage" src="{{userdata.images}}" class="img-fluid rounded"
+                  alt="Preview" /><br><br>
+                  <a class="btn btn-primary" href="{{url_for('deleteProfile_picture')}}">Remove Picture</a>
               </div>
               <div class="mb-3">
                 <label for="bio" class="form-label">Bio:</label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  class="form-control"
-                  rows="4"
-                  placeholder="Enter your bio here..."
-                >{{userdata.bio}}</textarea
-                >
+                <textarea id="bio" name="bio" class="form-control" rows="4"
+                  placeholder="Enter your bio here...">{{userdata.bio}}</textarea>
               </div>
               <div class="mb-3">
-                <label for="occupation" class="form-label"
-                  >Occupation</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="occupation"
-                  name="occupation"
-                  placeholder="Enter your occupation"
-                  value="{{userdata.occupation}}"
-                />
+                <label for="occupation" class="form-label">Occupation</label>
+                <input type="text" class="form-control" id="occupation" name="occupation"
+                  placeholder="Enter your occupation" value="{{userdata.occupation}}" />
               </div>
               <div class="mb-3">
-                <label for="contact" class="form-label"
-                  >Contact Details</label
-                >
-                <input
-                  type="tel"
-                  class="form-control"
-                  id="contact"
-                  name="contact"
-                  placeholder="Enter your contact number"
-                  required
-                  value="{{userdata.contact_details}}"
-                />
+                <label for="contact" class="form-label">Contact Details</label>
+                <input type="tel" class="form-control" id="contact" name="contact"
+                  placeholder="Enter your contact number" required value="{{userdata.contact_details}}" />
               </div>
               <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="address"
-                  name="address"
-                  placeholder="Enter your address"
-                  required
-                  value="{{userdata.home_address}}"
-                />
+                <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address"
+                  required value="{{userdata.home_address}}" />
               </div>
               <div class="mb-3">
-                <label for="postalCode" class="form-label"
-                  >Postal Code</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="postalCode"
-                  name="postalCode"
-                  placeholder="Enter your postal code"
-                  required
-                  value="{{userdata.postal_code}}"
-                />
+                <label for="postalCode" class="form-label">Postal Code</label>
+                <input type="text" class="form-control" id="postalCode" name="postalCode"
+                  placeholder="Enter your postal code" required value="{{userdata.postal_code}}" />
               </div>
-              
-                <div class="conatiner">
-                  <div class="row">
-                    <div class="editProfileButtons">
-                      <div class="text-center col-md-6">
-                        <a
-                          class="btn btn-outline-primary"
-                          href="{{url_for('post')}}"
-                          >Cancel</a
-                        >
-                      </div>
-                      <div class="text-center col-md-6">
-                        <button type="submit" class="btn btn-outline-success">
-                          Update
-                        </button>
-                      </div>
+
+              <div class="conatiner">
+                <div class="row">
+                  <div class="editProfileButtons">
+                    <div class="text-center col-md-6">
+                      <a class="btn btn-outline-primary" href="{{url_for('post')}}">Cancel</a>
                     </div>
-                    
+                    <div class="text-center col-md-6">
+                      <button type="submit" class="btn btn-outline-success">
+                        Update
+                      </button>
+                    </div>
                   </div>
+
                 </div>
               </div>
-            </form>
           </div>
+          </form>
         </div>
       </div>
     </div>
-<br><br>
-    <div class="row">
-        <div class="container mt-5">
-      
-         {%if userPosts is not none and userPosts|length > 0%}
-         {%for item in userPosts%}
-          <div class="card content-container">
+  </div>
+  <br><br>
+  <div class="row">
+    <div class="container mt-5 edit-profile">
+      {% if userPosts is not none and userPosts|length > 0 %}
+        {% for item in userPosts %}
+          <div class="card content-container fixed-width-card">
             <div class="card-header">
-              <h5 id="fullName">By: {{item.author}}</h5>
+              <h5 id="fullName">By: {{ item.author }}</h5>
             </div>
             <div class="card-body">
-              <h6 id="title">Title: {{item.title}}</h6>
-              <p id="description">Description: {{item.description}}</p>
+              <h6 id="title">Title: {{ item.title }}</h6>
+              <p id="description">Description: {{ item.description }}</p>
               <small class="datePosted">Posted: {{ item.post_date }}, {{ item.post_time }}</small>
               <div class="swiper">
                 <div class="swiper-wrapper">
-                  
-                  {% for data in item.media%} 
-                  <div class="swiper-slide">
-                    {% if data.endswith('.mp4') %}
-                    <video controls onclick="openVideo('../{{ data }}')">
-                      <source src="../{{ data }}" type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                    {% else %}
-                    <img src="../{{data}}" alt="image" />
-                    {% endif %} 
-                  </div>
+                  {% for data in item.media %}
+                    <div class="swiper-slide">
+                      {% if data.endswith('.mp4') %}
+                        <video controls onclick="openVideo('../{{ data }}')">
+                          <source src="../{{ data }}" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      {% else %}
+                        <img src="../{{ data }}" alt="image" />
+                      {% endif %}
+                    </div>
                   {% endfor %}
                 </div>
-                
+                <!-- Add Pagination -->
                 <div class="swiper-pagination"></div>
-                
+                <!-- Add Previous Button -->
                 <div class="swiper-button-prev"></div>
-               
                 <div class="swiper-button-next"></div>
               </div>
-              
               <div class="ProfileEditButtons">
-              <div class="container mt-5"> 
-                <div class="row">
-                <div class="col-md-6 text-center" >
-                  <form action="{{ url_for('deletePost', postid=item.postId) }}" method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  
-                    <button 
-                    type="submit"
-                    class=" btn btn-outline-danger"
-                  >
-                  <i class="fas fa-trash"></i> Delete Post
-                  </button>
+                <div class="container mt-5">
+                  <div class="row">
+                    <div class="col-md-6 text-center">
+                      <form action="{{ url_for('deletePost', postid=item.postId) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-danger">
+                          <i class="fas fa-trash"></i> Delete Post
+                        </button>
+                      </form>
+                    </div>
+                    <div class="col-md-6 text-center">
+                      <form action="{{ url_for('updatePost', postid=item.postId) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-primary">
+                          <i class="fa fa-pencil-alt"></i> Edit Post
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                 </div>
-                </form>
-                <div class="col-md-6 text-center">
-                  <form action="{{url_for('updatePost',postid=item.postId)}}" method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button
-                    type="submit"
-                    class=" btn btn-outline-primary"
-                  >
-                  <i class="fa fa-pencil-alt"></i> Edit Post
-                  </button>
-                  </form>
-                </div>
-              </div>
-              </div>
-             
               </div>
             </div>
           </div>
-          {%endfor%}
-         
-         {%endif%}
-          
-        </div>
-      
-    
+        {% endfor %}
+      {% endif %}
     </div>
+
+  </div>
 </div>
 <div class="mt-5"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

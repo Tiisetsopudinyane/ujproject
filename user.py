@@ -418,7 +418,7 @@ def retrieve_media(post_id):
     
     
 def loadPosts(name):
-    query="SELECT * FROM Post where title=? ORDER BY post_date DESC, post_time DESC"
+    query="SELECT * ,COUNT(*) as total FROM Post where title=? ORDER BY post_date DESC, post_time DESC"
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
@@ -442,14 +442,22 @@ def loadPosts(name):
 
 
 
-def countPosts(name):
-    query="SELECT COUNT(*) FROM Post where title=?"
+def countPosts():
+    query="SELECT title,COUNT(title) as total FROM Post GROUP BY title"
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query,[name,])
+        cursor.execute(query,)
         posts = cursor.fetchall()
-        return posts
+        
+        columns = [column[0] for column in cursor.description]
+        post_list = []
+        for post in posts:
+                
+            post_dict = dict(zip(columns, post))
+            post_list.append(post_dict)
+                
+        return post_list 
         
     except sqlite3.Error as e:
         print('Error:', e)
@@ -701,26 +709,47 @@ def insert_share(post_id, user_id):
     try:
         cursor.execute(query, (post_id, user_id))
         conn.commit()
-        increase_share_count(post_id)
+        increment_share_count(post_id)
     except sqlite3.Error as e:
         print('Error: ', e)
     finally:
         conn.close()
- 
+
+def share_count(post_id):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    try:
+        # Fetch the current comment count for the post
+        cursor.execute("SELECT count(share) FROM Post WHERE postId=?", (post_id,))
+        current_count = cursor.fetchone()
+        conn.commit()
+    except sqlite3.Error as e:
+        print('Error: ', e)
+    finally:
+        conn.close()
+    
+    
+def delete_profile_picture(userId):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    cursor.execute("UPDATE User SET images = NULL WHERE userId = ?", (userId,))    
+    conn.commit()
+    conn.close()
+    
  
 def increment_share_count(post_id):
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
         # Fetch the current comment count for the post
-        cursor.execute("SELECT Share FROM Post WHERE postId=?", (post_id,))
+        cursor.execute("SELECT shares FROM Post WHERE postId=?", (post_id,))
         current_count = cursor.fetchone()[0]
 
         # Increment the comment count by one
         new_count = current_count + 1
 
         # Update the comment count in the Post table
-        cursor.execute("UPDATE Post SET share=? WHERE postId=?", (new_count, post_id))
+        cursor.execute("UPDATE Post SET shares=? WHERE postId=?", (new_count, post_id))
         conn.commit()
     except sqlite3.Error as e:
         print('Error: ', e)
@@ -765,6 +794,19 @@ def sharing(postid):
     finally:
         conn.close()
 
+def insertreplyMessages(sender_id, user_id, message, replyTo):
+    query="""INSERT INTO Messages (senderId, receiverId, message,replyTo) VALUES (?, ?, ?,?)"""
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, [ senderId, receiverId, message,replyTo])
+        conn.commit()        
+    except sqlite3.Error as e:
+        print('Error: ',e)
+    finally:
+        conn.close()
+
+
 
 def insertMessages(senderId, receiverId, message):
     query="""INSERT INTO Messages (senderId, receiverId, message) VALUES (?, ?, ?)"""
@@ -803,27 +845,68 @@ def messagesFromSender(senderId, receiverId):
         
         
 def selectAllmessages(userId):
-    query="""SELECT DISTINCT Sender.userId AS sender, Sender.first_name AS sender_first_name, Sender.last_name AS sender_last_name,Receiver.first_name as receiver_fisrt_name,Receiver.last_name AS receiver_last_name, Messages.message, Messages.timestamp 
-            FROM Messages 
-            INNER JOIN User AS Sender ON Messages.senderId = Sender.userId 
-            INNER JOIN User AS Receiver ON Messages.receiverId = Receiver.userId 
-            WHERE Receiver.userId = ? ORDER BY Messages.timestamp DESC"""
+    query = """
+    SELECT DISTINCT 
+        M1.messageId AS message_id,
+        Sender.userId AS sender_id, 
+        Sender.first_name AS sender_first_name, 
+        Sender.last_name AS sender_last_name, 
+        Receiver.userId AS receiver_id,
+        Receiver.first_name AS receiver_first_name, 
+        Receiver.last_name AS receiver_last_name, 
+        M1.message, 
+        M1.timestamp AS message_timestamp,
+        M2.message AS reply_message, 
+        M2.timestamp AS reply_timestamp
+    FROM 
+        Messages AS M1
+    INNER JOIN 
+        User AS Sender ON M1.senderId = Sender.userId 
+    INNER JOIN 
+        User AS Receiver ON M1.receiverId = Receiver.userId 
+    LEFT JOIN 
+        Messages AS M2 ON M1.messageId = M2.replyTo
+    WHERE 
+        Receiver.userId = ? 
+    ORDER BY 
+        M1.timestamp DESC;
+    """
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query,[userId,])
-        Messages = cursor.fetchall()
-        if Messages:
+        cursor.execute(query, [userId])
+        rows = cursor.fetchall()
+        if rows:
             columns = [column[0] for column in cursor.description]
             messages_list = []
-            for message in Messages:
-                message_dict = dict(zip(columns, message))
-                messages_list.append(message_dict)
+            for row in rows:
+                row_dict = dict(zip(columns, row))
+                messages_list.append(row_dict)
                 print(messages_list)
             return messages_list
         else:
-            return {'message':'no messages found'}
+            return {'message': 'No messages found.'}
     except sqlite3.Error as e:
-        print('Error: ',e)
+        print('Error:', e)
     finally:
         conn.close()
+
+
+def update_campaign(subject, overview, funding_goal, duration, description):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO Campaigns (subject, overview, funding_goal, duration, description)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (subject, overview, funding_goal, duration, description))
+    conn.commit()
+    conn.close()
+    
+    
+def select_all_campaigns():
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM Campaigns')
+    campaigns = cursor.fetchall()
+    conn.close()
+    return campaigns

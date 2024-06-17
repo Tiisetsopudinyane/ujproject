@@ -1,0 +1,63 @@
+{%extends "base.html"%}
+
+{% block buttons %}
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item p-2">
+      <a 
+       name=""
+       type="buttton"
+       class="btn btn-primary"
+       href="#"
+      >
+       <i class="fas fa-home"></i>
+       Home
+      </a>
+     </li>
+     
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
+    </li>
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+    </li>
+  </ul>
+{% endblock buttons %}
+
+{%block content%}
+<br>
+<div class="row">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Update Campaign Information</h2>
+            </div>
+            <div class="card-body">
+                
+                <form action="/update_campaign" method="post">
+                    <div class="form-group">
+                        <label for="subject">Subject:</label>
+                        <input type="text" class="form-control" id="subject" name="subject"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="overview">Overview:</label>
+                        <textarea class="form-control" id="overview" name="overview" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="funding_goal">Funding Goal:</label>
+                        <input type="number" class="form-control" id="funding_goal" name="funding_goal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration (days):</label>
+                        <input type="number" class="form-control" id="duration" name="duration" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                    </div><br>
+                    <button type="submit" class="btn btn-primary">Update Campaign</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

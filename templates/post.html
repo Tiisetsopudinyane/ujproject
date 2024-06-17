@@ -47,7 +47,7 @@
 <div class="row header">
   <div class="container">
     <div class="content-posts">
-      <div class="col-3 col-md-3 col-sm-5 bio-container">
+      <div class="col-3 col-md-3 col-sm bio-container">
         <div class="col-md-12">
           <div class="row image_user_infor">
             <div class="box"></div>
@@ -83,7 +83,7 @@
         </div>
       </div>
 
-      <div class="col-5 col-md-5 col-sm-5 content-div">
+      <div class="col-5 col-md-5 col-sm content-div">
         <div class="row">
           <div class="card">
             <div class="card-header listcategory">
@@ -96,70 +96,161 @@
                   class="btn gradient-div"
                   name="agriculture"
                 >
-                  <span></span> Agriculture
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'agriculture' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Agriculture
                 </a>
                 <a
                   href="{{url_for('loadposts',name='healthcare')}}"
                   class="btn gradient-div"
                   name="healthcare"
                 >
-                  <span></span> HealthCare
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'healthcare' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> HealthCare
                 </a>
                 <a
                   href="{{url_for('loadposts',name='technology')}}"
                   class="btn gradient-div"
                   name="technology"
                 >
-                  <span></span> Technology
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'technology' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br>
+                Technology
                 </a>
                 <a
                   href="{{url_for('loadposts',name='energy')}}"
                   class="btn gradient-div"
                   name="energy"
                 >
-                  <span></span> Energy
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'energy' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Energy
                 </a>
                 <a
                   href="{{url_for('loadposts',name='education')}}"
                   class="btn gradient-div"
                   name="education"
                 >
-                  <span></span> Education
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'education' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Education
                 </a>
                 <a
                   href="{{url_for('loadposts',name='manufacturing')}}"
                   class="btn gradient-div"
                   name="manufacturing"
                 >
-                  <span></span> Manufacture
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'manufacturing' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Manufacture
                 </a>
                 <a
                   href="{{url_for('loadposts',name='finance')}}"
                   class="btn gradient-div"
                   name="finance"
                 >
-                  <span></span> Finace
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'finance' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Finace
                 </a>
                 <a
                   href="{{url_for('loadposts',name='transport')}}"
                   class="btn gradient-div"
                   name="transport"
                 >
-                  <span></span> Transportation
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'transport' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Transportation
                 </a>
                 <a
                   href="{{url_for('loadposts',name='environment')}}"
                   class="btn gradient-div"
                   name="environment"
                 >
-                  <span></span> Environment
+                <span>{% if counts is not none and counts|length > 0 %}
+                 
+                  {% for count in counts %}
+                  
+                    {% if count.title == 'environment' %}
+                      {{ count.total }} Post/s
+                      {%else%}
+                      {%endif%}
+                  {% endfor %}
+                  {%endif%}
+                </span><br> Environment
                 </a>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-3 col-md-3 col-sm-5 bio-container">
+      <div class="col-3 col-md-3 col-sm bio-container">
         <div class="campaign">
           <h2>HealthGenius - Advancing Personalized Healthcare</h2>
           <p>

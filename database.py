@@ -93,17 +93,28 @@ cursor.execute('''
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Messages (
-        messageId INTEGER PRIMARY KEY,
-        senderId INTEGER NOT NULL,
-        receiverId INTEGER NOT NULL,
-        message TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (senderId) REFERENCES User(userId),
-        FOREIGN KEY (receiverId) REFERENCES User(userId)
+    messageId INTEGER PRIMARY KEY,
+    senderId INTEGER NOT NULL,
+    receiverId INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    replyTo INTEGER, -- This column is used to store the messageId of the message this is a reply to
+    FOREIGN KEY (senderId) REFERENCES User(userId),
+    FOREIGN KEY (receiverId) REFERENCES User(userId),
+    FOREIGN KEY (replyTo) REFERENCES Messages(messageId)
 )
 ''')
 
-
+cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Campaigns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subject TEXT NOT NULL,
+            overview TEXT NOT NULL,
+            funding_goal INTEGER NOT NULL,
+            duration INTEGER NOT NULL,
+            description TEXT NOT NULL
+        )
+    ''')
 
 
 

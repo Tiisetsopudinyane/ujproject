@@ -39,20 +39,33 @@
     <div class="col-md-12">
         <div class="card content-container">
             <div class="card-header">
-                <h4>Sender</h4>
+                <h4>Messages</h4>
             </div>
                 <div class="card-body messages">
-                {%if sender is not none and sender|length>0%}
-               <ul>
-                {%for item in sender%}
-                <li>
-                <h5><a href="/selectedUserProfile/{{ item.sender }}">{{item.sender_first_name}} {{item.sender_last_name}}</a></h5>
-                <p>{{item.timestamp}}</p>
-                <h6>{{item.message}}</h6>
-                </li>
-                {%endfor%}
-               </ul>
-                {%endif%}
+                  {% if messages is not none and messages|length > 0 %}
+                  <ul>
+                    {% for message in messages %}
+                      <li>
+                        <h5>{{ message.sender_first_name }} {{ message.sender_last_name }}</h5>
+                        <p>{{ message.timestamp }}</p>
+                        <h6>{{ message.message }}</h6>
+                        {% if message.sender_id != sender_id %}
+                        <a href="/selectedUserProfile/{{ message.sender_id }}?reply_to={{ message.message_id }}">Reply</a>
+                        {% endif %}
+                      </li>
+                      {% for reply in message.replies %}
+                        <li>
+                          <h5><a href="/selectedUserProfile/{{ reply.sender_id }}">{{ reply.sender_first_name }} {{ reply.sender_last_name }}</a></h5>
+                          <p>{{ reply.timestamp }}</p>
+                          <h6>{{ reply.message }}</h6>
+                        </li>
+                      {% endfor %}
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p>No messages found.</p>
+                {% endif %}
+                      
             </div>
         </div>
     </div>
