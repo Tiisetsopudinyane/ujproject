@@ -96,13 +96,13 @@
                   class="btn gradient-div"
                   name="agriculture"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'agriculture' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -113,13 +113,13 @@
                   class="btn gradient-div"
                   name="healthcare"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'healthcare' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                     
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -130,13 +130,13 @@
                   class="btn gradient-div"
                   name="technology"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'technology' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -148,13 +148,13 @@
                   class="btn gradient-div"
                   name="energy"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'energy' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -165,13 +165,13 @@
                   class="btn gradient-div"
                   name="education"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'education' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -182,13 +182,13 @@
                   class="btn gradient-div"
                   name="manufacturing"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'manufacturing' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -199,13 +199,13 @@
                   class="btn gradient-div"
                   name="finance"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'finance' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -216,13 +216,13 @@
                   class="btn gradient-div"
                   name="transport"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'transport' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}
@@ -233,13 +233,13 @@
                   class="btn gradient-div"
                   name="environment"
                 >
-                <span>{% if counts is not none and counts|length > 0 %}
+                <span>{% if counts is not none and counts|length >= 0 %}
                  
                   {% for count in counts %}
                   
                     {% if count.title == 'environment' %}
                       {{ count.total }} Post/s
-                      {%else%}
+                      
                       {%endif%}
                   {% endfor %}
                   {%endif%}

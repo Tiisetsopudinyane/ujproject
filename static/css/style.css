@@ -205,6 +205,7 @@ body {
 }
 .specific_user{
 display:flex;
+width: 100%;
 }
 .comment_div {
   max-height: 200px; /* Set a maximum height to enable scrolling */
@@ -521,6 +522,9 @@ padding: auto;
 }
 .image_user_infor{
   display: block;
+}
+.message{
+  width: 80%;
 }
 @media only screen and (max-width:320px) {
   .logo_img{

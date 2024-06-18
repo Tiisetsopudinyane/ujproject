@@ -1,15 +1,15 @@
 import sqlite3
 
-# Connect to SQLite database (creates if not exists)
+
 conn = sqlite3.connect('blog.db')
 
-# Create a cursor object to execute SQL queries
 cursor = conn.cursor()
-#cursor.execute(''' drop table pOST''')
-#cursor.execute(''' drop table Comment''')
-#cursor.execute(''' drop table Likes''')
-
-# Create replies table if not exists
+# cursor.execute("drop table replies")
+# cursor.execute("drop table Post")
+# cursor.execute("drop table Comment")
+# cursor.execute("drop table Likes")
+# cursor.execute("drop table Shares")
+# cursor.execute("drop table Messages")
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS replies (
         reply_id INTEGER PRIMARY KEY,
@@ -98,12 +98,25 @@ cursor.execute('''
     receiverId INTEGER NOT NULL,
     message TEXT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    replyTo INTEGER, -- This column is used to store the messageId of the message this is a reply to
+    FOREIGN KEY (senderId) REFERENCES User(userId),
+    FOREIGN KEY (receiverId) REFERENCES User(userId)
+)
+''')
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Messages_replies (
+    message_reply_Id INTEGER PRIMARY KEY,
+    senderId INTEGER NOT NULL,
+    receiverId INTEGER NOT NULL,
+    reply_message TEXT,
+    reply_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    replyTo INTEGER, 
     FOREIGN KEY (senderId) REFERENCES User(userId),
     FOREIGN KEY (receiverId) REFERENCES User(userId),
     FOREIGN KEY (replyTo) REFERENCES Messages(messageId)
 )
 ''')
+
 
 cursor.execute('''
         CREATE TABLE IF NOT EXISTS Campaigns (

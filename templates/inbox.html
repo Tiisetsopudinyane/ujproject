@@ -1,76 +1,76 @@
-{%extends "base.html"%}
-
-{% block buttons %}
-  <ul class="navbar-nav ml-auto">
-    <li class="nav-item p-2">
-      <a 
-       name=""
-       type="buttton"
-       class="btn btn-primary"
-       href="#"
-      >
-       <i class="fas fa-home"></i>
-       Home
-      </a>
-     </li>
-     <li class="nav-item p-2">
-       <a
-       name=""
-       type="button"
-       class="btn btn-primary"
-       href="{{ url_for('loadmessages') }}"
-       ><i class="fas fa-envelope directMessages"></i> Direct
-       Messages</a
-     >
-     </li>
-    <li class="nav-item p-2">
-      <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
-    </li>
-    <li class="nav-item p-2">
-      <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
-    </li>
-  </ul>
-{% endblock buttons %}
-
-{%block content%}
-<br><br>
+{%extends "base.html"%} {% block buttons %}
+<ul class="navbar-nav ml-auto">
+  <li class="nav-item p-2">
+    <a name="" type="buttton" class="btn btn-primary" href="#">
+      <i class="fas fa-home"></i>
+      Home
+    </a>
+  </li>
+  <li class="nav-item p-2">
+    <a
+      name=""
+      type="button"
+      class="btn btn-primary"
+      href="{{ url_for('loadmessages') }}"
+      ><i class="fas fa-envelope directMessages"></i> Direct Messages</a
+    >
+  </li>
+  <li class="nav-item p-2">
+    <a class="btn btn-primary" href="{{ url_for('post') }}"
+      ><i class="fas fa-arrow-left"></i>Go Back</a
+    >
+  </li>
+  <li class="nav-item p-2">
+    <a class="btn btn-primary" href="{{ url_for('logout') }}"
+      ><i class="fas fa-sign-out-alt"></i>Log Out</a
+    >
+  </li>
+</ul>
+{% endblock buttons %} {%block content%}
+<br /><br />
 <div class="row">
-<div class="container mt-5">
+  <div class="container mt-5">
     <div class="col-md-12">
-        <div class="card content-container">
-            <div class="card-header">
-                <h4>Messages</h4>
-            </div>
-                <div class="card-body messages">
-                  {% if messages is not none and messages|length > 0 %}
-                  <ul>
-                    {% for message in messages %}
-                      <li>
-                        <h5>{{ message.sender_first_name }} {{ message.sender_last_name }}</h5>
-                        <p>{{ message.timestamp }}</p>
-                        <h6>{{ message.message }}</h6>
-                        {% if message.sender_id != sender_id %}
-                        <a href="/selectedUserProfile/{{ message.sender_id }}?reply_to={{ message.message_id }}">Reply</a>
-                        {% endif %}
-                      </li>
-                      {% for reply in message.replies %}
-                        <li>
-                          <h5><a href="/selectedUserProfile/{{ reply.sender_id }}">{{ reply.sender_first_name }} {{ reply.sender_last_name }}</a></h5>
-                          <p>{{ reply.timestamp }}</p>
-                          <h6>{{ reply.message }}</h6>
-                        </li>
-                      {% endfor %}
-                    {% endfor %}
-                  </ul>
-                {% else %}
-                  <p>No messages found.</p>
-                {% endif %}
-                      
-            </div>
+      <div class="card content-container message">
+        <div class="card-header">
+          <h4>Messages</h4>
         </div>
+        <div class="card-body messages">
+          {% if messages is not none and messages|length > 0 %}
+          <ul>
+            {% for message in messages %}
+            <li>
+              {% if message.sender_id != sender_id %}
+                <!-- Received message -->
+                <h5>{{ message.sender_first_name }} {{ message.sender_last_name }}</h5>
+                <p>{{ message.message_timestamp }}</p>
+                <h6>{{ message.message }}</h6>
+                {% if message.reply_message %}
+                  <p><strong>Reply:</strong> {{ message.reply_message }}</p>
+                  <p><small>Reply Timestamp: {{ message.reply_timestamp }}</small></p>
+                {% endif %}
+                <a href="/selectedUserProfile/{{ message.sender_id }}?reply_to={{ message.message_id }}">Reply</a>
+              {% else %}
+                <!-- Sent message -->
+                <h5>You</h5>
+                <p>{{ message.message_timestamp }}</p>
+                <h6>{{ message.message }}</h6>
+                {% if message.reply_message %}
+                  <p><strong>Reply:</strong> {{ message.reply_message }}</p>
+                  <p><small>Reply Timestamp: {{ message.reply_timestamp }}</small></p>
+                {% endif %}
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p>No messages found.</p>
+          {% endif %}
+        </div>
+        
+      </div>
     </div>
-
+  </div>
 </div>
-</div>
-<br><br>
+<br /><br />
 {%endblock%}

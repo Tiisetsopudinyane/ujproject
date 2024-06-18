@@ -4,7 +4,7 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,delete_profile_picture,insert_share,select_all_campaigns,Messages_replies,countPosts,decrease_like_count,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 import base64
 import io
 from PIL import Image
@@ -64,7 +64,8 @@ def homePage():
 def deleteProfile_picture():
     userId=session["user_id"]
     
-    delete_profile_picture(userId)
+    image=delete_profile_picture(userId)
+    delete_profile_picture_from_file(image)
     return redirect(url_for("post"))
     
     
@@ -85,7 +86,6 @@ def post():
 @app.route("/loadposts/<string:name>",methods=["GET"])
 def loadposts(name):
     posts=loadPosts(name)
-    print(posts)
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
@@ -103,7 +103,7 @@ def loadposts(name):
                     
         return render_template("postcontent.html",post=posts,user=userdata,profileimage=profileimage)
     else:
-        print("message")
+        print(posts['message'])
         return redirect(url_for("post"))
 
 
@@ -140,12 +140,12 @@ def selectedUserProfile(user_id):
     sender_id = session.get("user_id")  # Using .get() to avoid KeyError if "user_id" is not in session
     sender_data = selectAllfromUser_with_Id(sender_id)
     reply_to = request.args.get("reply_to")  # If "reply_to" is sent in the form, it means it's a reply
-    print(reply_to)
+    print(user_id)
     if request.method == "POST":
         message = request.form.get("message")
         
         if reply_to:  # Check if it's a reply
-            insertreplyMessages(sender_id, user_id, message, reply_to)
+            Messages_replies(sender_id, user_id, message,reply_to)
         else:
             insertMessages(sender_id, user_id, message)
         return redirect(url_for("post"))
@@ -494,6 +494,59 @@ def create_upload_folder(files):
         
     return file_paths
 
+def delete_media_content_from_file(file):
+    try:
+        base_dir = "static/uploads"
+        # Construct the full file path
+        file_path = os.path.join(base_dir, file)
+        
+        # Check if the file exists before attempting to delete
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file}' successfully deleted.")
+        else:
+            print(f"Error: File '{file}' does not exist.")
+    except OSError as e:
+        print(f"Error: Failed to delete file '{file}'. Reason: {str(e)}")
+
+
+
+def delete_profile_picture_from_file(file):
+    file=str(file).replace('\\','/')
+    try:
+        base_dir = "/static/images"
+        # Construct the full file path
+        file_path = os.path.join(base_dir,file)
+        
+        # Check if the file exists before attempting to delete
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file}' successfully deleted.")
+        else:
+            print(f"Error: File '{file}' does not exist.")
+    except OSError as e:
+        print(f"Error: Failed to delete file '{file}'. Reason: {str(e)}")
+
+
+
+def delete_midea_picture_from_file(file):
+    file=str(file).replace('\\','/')
+    try:
+        base_dir = "static/uploads"
+        # Construct the full file path
+        for images in file:
+            file_path = os.path.join(base_dir,images)
+                    
+        # Check if the file exists before attempting to delete
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"File '{file}' successfully deleted.")
+            else:
+                 print(f"Error: File '{file}' does not exist.")
+    except OSError as e:
+        print(f"Error: Failed to delete file '{file}'. Reason: {str(e)}")
+
+
 
 def media_file(files):
     # Create the 'uploads' directory if it doesn't exist
@@ -514,8 +567,7 @@ def media_file(files):
     
 
 def profile_image(files):
-    # Create the 'uploads' directory if it doesn't exist
-    os.makedirs('static/uploads', exist_ok=True)
+   
     
         # Save each file to the 'uploads' directory
     file_path = os.path.join('static/images', files.filename)
