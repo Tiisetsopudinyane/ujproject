@@ -126,6 +126,30 @@ cursor.execute('''
         )
     ''')
 
+cursor.execute('''
+    CREATE TABLE SurveyQuestions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        question TEXT NOT NULL,
+        question_type TEXT CHECK(question_type IN ('single', 'multiple', 'custom')) NOT NULL,
+        choices TEXT,
+        custom_answer TEXT
+)
+''')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Close the connection

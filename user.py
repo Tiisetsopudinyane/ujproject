@@ -751,6 +751,7 @@ def share_count(post_id):
         cursor.execute("SELECT count(share) FROM Post WHERE postId=?", (post_id,))
         current_count = cursor.fetchone()
         conn.commit()
+        return current_count
     except sqlite3.Error as e:
         print('Error: ', e)
     finally:
@@ -1033,3 +1034,17 @@ def get_full_post_content(search, offset=0, limit=10):
 
 
 
+def survey(question,question_type,choices,custom_answer):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO SurveyQuestions (question, question_type, choices, custom_answer)
+        VALUES (?, ?, ?, ?)
+    """, (question, question_type, choices, custom_answer))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Question created successfully'}), 200
+
+
+ 

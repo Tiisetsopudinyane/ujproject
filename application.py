@@ -153,6 +153,31 @@ def loadmessages():
     return render_template("inbox.html",messages=messages)
     
 
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+@app.route('/api/create-question', methods=['POST'])
+def create_question():
+    # Get form data from POST request
+    question = request.form.get('question')
+    question_type = request.form.get('questionType')
+    choices = request.form.get('choices')
+    custom_answer = request.form.get('customAnswer')
+
+    # Validate inputs
+    if not question or not question_type:
+        return jsonify({'error': 'Question and Question Type are required'}), 400
+
+    # Handle choices based on question type
+    if question_type == 'custom':
+        if ',' not in custom_answer:
+            return jsonify({'error': 'Custom answer must contain two strings separated by comma'}), 400
+        choices = None
+    elif question_type == 'single' or question_type == 'multiple':
+        if not choices:
+            return jsonify({'error': 'Choices are required for single or multiple choice questions'}), 400
+        custom_answer = None
 
 
 @app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
