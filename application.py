@@ -4,7 +4,7 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 import base64
 import io
 from PIL import Image
@@ -171,13 +171,14 @@ def create_question():
 
     # Handle choices based on question type
     if question_type == 'custom':
-        if ',' not in custom_answer:
-            return jsonify({'error': 'Custom answer must contain two strings separated by comma'}), 400
+        survey(question,question_type,choices,custom_answer)
         choices = None
     elif question_type == 'single' or question_type == 'multiple':
-        if not choices:
-            return jsonify({'error': 'Choices are required for single or multiple choice questions'}), 400
-        custom_answer = None
+        if ',' not in custom_answer:
+            if not choices:
+                return jsonify({'error': 'Choices are required for single or multiple choice questions'}), 400
+            survey(question,question_type,choices,custom_answer)
+            custom_answer = None
 
 
 @app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
