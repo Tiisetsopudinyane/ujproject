@@ -1,9 +1,8 @@
 import sqlite3
 
-# Connect to SQLite database (creates if not exists)
+
 conn = sqlite3.connect('blog.db')
 
-# Create a cursor object to execute SQL queries
 cursor = conn.cursor()
 #cursor.execute(''' drop table pOST''')
 #cursor.execute(''' drop table Comment''')

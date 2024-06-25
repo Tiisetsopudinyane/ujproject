@@ -574,6 +574,9 @@ padding: auto;
 .image_user_infor{
   display: block;
 }
+.message{
+  width: 80%;
+}
 @media only screen and (max-width:320px) {
   .logo_img{
     display: none;

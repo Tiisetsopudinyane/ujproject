@@ -99,7 +99,7 @@ def selectAllmessages(senderId, receiverId):
         if Messages:
             column=[column[0] for column in cursor.description]
             messages_dict=dict(zip(column,Messages))
-            messages=massages_dict
+            messages=messages_dict
             return messages
         else:
             return {'message':'no messages found'}
@@ -410,7 +410,7 @@ def retrieve_media(post_id):
     post = get_post(post_id)
     if post:  
         media = post[6]  
-        midea = json.loads(media)
+        media = json.loads(media)
         return media
     else:
         return None
@@ -430,8 +430,11 @@ def loadPosts(name):
             posts_list = []
             for post in posts:
                 post_dict = dict(zip(columns, post))
-                posts_list.append(post_dict)
-            return posts_list
+                if post_dict['total']==0:
+                    return {'message': 'No posts found'}
+                else:
+                    posts_list.append(post_dict)
+                    return posts_list
         else:
             return {'message': 'No posts found'}
     except sqlite3.Error as e:
@@ -532,10 +535,10 @@ def loadUsersIdViwComments(userId):
         if userIds:
             
             columns = [column[0] for column in cursor.description]
-            userId_list = []
+            UserId_list = []
             for userId in userIds:
                 
-                userId_dict = dict(zip(columns, userId))
+                UserId_dict = dict(zip(columns, userId))
                 UserId_list.append(UserId_dict)
                 
             return json.dumps(UserId_list)  # Return JSON data
@@ -757,9 +760,36 @@ def share_count(post_id):
 def delete_profile_picture(userId):
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
-    cursor.execute("UPDATE User SET images = NULL WHERE userId = ?", (userId,))    
-    conn.commit()
-    conn.close()
+    image = None  # Initialize image variable to store the deleted image
+
+    try:
+        # Fetch the user's current profile picture (images) from the database
+        cursor.execute("SELECT images FROM User WHERE userId = ?", (userId,))
+        profile = cursor.fetchone()
+        
+        if profile:
+            image = profile[0]  # Assuming 'images' is a column in the User table
+            print("Image from db:", image)
+            
+            # Update the User table to set the images column to NULL
+            cursor.execute("UPDATE User SET images = NULL WHERE userId = ?", (userId,))
+            conn.commit()
+            print(f"Profile picture for user ID {userId} successfully deleted.")
+        
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        conn.close()
+        return image  # Return the image URL or path that was deleted from the database
+
+# Example usage:
+if __name__ == "__main__":
+    user_id_to_delete = 1  # Replace with the actual user ID
+    deleted_image = delete_profile_picture(user_id_to_delete)
+    if deleted_image:
+        print(f"Deleted profile picture: {deleted_image}")
+    else:
+        print(f"No profile picture found for user ID {user_id_to_delete}")
     
  
 def increment_share_count(post_id):
@@ -833,12 +863,12 @@ def insertreplyMessages(sender_id, user_id, reply, replyTo):
 
 
 
-def insertMessages(senderId, receiverId, message):
-    query="""INSERT INTO Messages (senderId, receiverId, message) VALUES (?, ?, ?)"""
+def Messages_replies(senderId, receiverId, reply_message,replyTo):
+    query="""INSERT INTO Messages_replies (senderId, receiverId, reply_message,replyTo) VALUES (?, ?, ?, ?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ senderId, receiverId, message])
+        cursor.execute(query, [ senderId, receiverId, reply_message,replyTo])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)
@@ -854,10 +884,10 @@ def messagesFromSender(senderId, receiverId):
         cursor.execute(query,(senderId, receiverId))
         Messages = cursor.fetchall()
         
-        if messages:
+        if Messages:
             columns = [column[0] for column in cursor.description]
             messages_list = []
-            for message in messages:
+            for message in Messages:
                 message_dict = dict(zip(columns, message))
                 messages_list.append(message_dict)
             return messages_list

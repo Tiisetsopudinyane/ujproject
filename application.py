@@ -64,7 +64,8 @@ def homePage():
 def deleteProfile_picture():
     userId=session["user_id"]
     
-    delete_profile_picture(userId)
+    image=delete_profile_picture(userId)
+    delete_profile_picture_from_file(image)
     return redirect(url_for("post"))
     
     
@@ -503,6 +504,59 @@ def create_upload_folder(files):
         
     return file_paths
 
+def delete_media_content_from_file(file):
+    try:
+        base_dir = "static/uploads"
+        # Construct the full file path
+        file_path = os.path.join(base_dir, file)
+        
+        # Check if the file exists before attempting to delete
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file}' successfully deleted.")
+        else:
+            print(f"Error: File '{file}' does not exist.")
+    except OSError as e:
+        print(f"Error: Failed to delete file '{file}'. Reason: {str(e)}")
+
+
+
+def delete_profile_picture_from_file(file):
+    file=str(file).replace('\\','/')
+    try:
+        base_dir = "/static/images"
+        # Construct the full file path
+        file_path = os.path.join(base_dir,file)
+        
+        # Check if the file exists before attempting to delete
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file}' successfully deleted.")
+        else:
+            print(f"Error: File '{file}' does not exist.")
+    except OSError as e:
+        print(f"Error: Failed to delete file '{file}'. Reason: {str(e)}")
+
+
+
+def delete_midea_picture_from_file(file):
+    file=str(file).replace('\\','/')
+    try:
+        base_dir = "static/uploads"
+        # Construct the full file path
+        for images in file:
+            file_path = os.path.join(base_dir,images)
+                    
+        # Check if the file exists before attempting to delete
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"File '{file}' successfully deleted.")
+            else:
+                 print(f"Error: File '{file}' does not exist.")
+    except OSError as e:
+        print(f"Error: Failed to delete file '{file}'. Reason: {str(e)}")
+
+
 
 def media_file(files):
     # Create the 'uploads' directory if it doesn't exist
@@ -523,8 +577,7 @@ def media_file(files):
     
 
 def profile_image(files):
-    # Create the 'uploads' directory if it doesn't exist
-    os.makedirs('static/uploads', exist_ok=True)
+   
     
         # Save each file to the 'uploads' directory
     file_path = os.path.join('static/images', files.filename)
