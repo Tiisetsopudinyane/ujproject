@@ -441,6 +441,31 @@ def loadPosts(name):
         conn.close()
 
 
+def load_Posts(offset=0, limit=10):
+    query="SELECT * FROM Post ORDER BY post_date DESC, post_time DESC LIMIT ? OFFSET ?"
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query,(limit, offset))
+        posts = cursor.fetchall()
+        print("posts",posts)
+        if posts:
+            columns = [column[0] for column in cursor.description]
+            posts_list = []
+            for post in posts:
+                post_dict = dict(zip(columns, post))
+                posts_list.append(post_dict)
+            return posts_list
+        else:
+            return {'message': 'No posts found'}
+    except sqlite3.Error as e:
+        print('Error:', e)
+        return {'message': 'An error occurred while loading posts'}
+    finally:
+        conn.close()
+
+
+
 
 def countPosts():
     query="SELECT title,COUNT(title) as total FROM Post GROUP BY title"
@@ -794,12 +819,12 @@ def sharing(postid):
     finally:
         conn.close()
 
-def insertreplyMessages(sender_id, user_id, message, replyTo):
-    query="""INSERT INTO Messages (senderId, receiverId, message,replyTo) VALUES (?, ?, ?,?)"""
+def insertreplyMessages(sender_id, user_id, reply, replyTo):
+    query="""INSERT INTO Reply (senderId, receiverId, reply,replyTo) VALUES (?, ?, ?,?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ senderId, receiverId, message,replyTo])
+        cursor.execute(query, [ senderId, receiverId, reply,replyTo])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)
@@ -910,3 +935,56 @@ def select_all_campaigns():
     campaigns = cursor.fetchall()
     conn.close()
     return campaigns
+
+
+
+def get_column_names():
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(Post)")
+    columns = cursor.fetchall()
+    conn.close()
+    # Extract column names from the result of PRAGMA table_info
+    return [column[1] for column in columns]
+
+
+def get_suggestions(query):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+
+    columns = get_column_names()
+    columns = [column for column in columns if column != 'media']
+    # Create the SQL query dynamically
+    sql_query = " UNION ".join([f"SELECT {column}, '{column}' as column_name FROM Post WHERE {column} LIKE ?" for column in columns])
+    parameters = ['%' + query + '%'] * len(columns)
+    
+    cursor.execute(sql_query, parameters)
+    results = cursor.fetchall()
+    conn.close()
+
+    # Remove duplicates and extract results
+    unique_results = {(result[0], result[1]) for result in results}
+    return list(unique_results)
+
+
+def get_full_post_content(search,offset=0, limit=10):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+
+    sql_query = f"SELECT * FROM Post WHERE title = ? ORDER BY post_date DESC, post_time DESC LIMIT ? OFFSET ?"
+    cursor.execute(sql_query,(search,limit, offset))
+    post_content = cursor.fetchall()
+    if post_content:
+            columns = [column[0] for column in cursor.description]
+            post_list = []
+            for row in post_content:
+                row_dict = dict(zip(columns, row))
+                post_list.append(row_dict)
+                print(post_list)
+            return post_list
+    conn.close()
+    print(post_content)
+    return post_content
+
+
+

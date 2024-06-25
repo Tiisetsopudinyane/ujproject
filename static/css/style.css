@@ -35,7 +35,8 @@ body {
     align-items: center;
     height: 15vh;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: bold;
     border-radius: 0px 0px 5px 0px;
     justify-content: space-between;
   }
@@ -58,7 +59,13 @@ body {
   
   .nav_header{
     background-color: rgb(255, 255, 255);
+    top: 0;
+    left: 0;
+    position: unset;
+    width: 100%;
+    padding: 0;
   }
+  
   .header {
     margin-top: 5%;
     display: flex;
@@ -67,6 +74,7 @@ body {
   }
   .header .content-posts{
     justify-content: space-evenly;
+    margin-top:13% ;
   }
   .edit-profile{
     margin-top: 20%;
@@ -83,6 +91,9 @@ body {
   z-index: 999;
   width: 100%;
   padding: 0;
+}
+.nav_header .logo_img{
+float: left;
 }
 .content-div{
   overflow: auto;
@@ -172,7 +183,9 @@ body {
 .share-icons {
     margin-top: 10px;
 }
-
+.btn-outline-secondary{
+  border-radius: 0 4px 4px 0;
+}
 /* Style for individual share icons */
 .share-icons a {
     display: block;
@@ -185,11 +198,39 @@ body {
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
+.post_container{
+  height: max-content;
+  border-radius: 15px ;
+  background-color: #f0f0f0;
+  padding: 20px;
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 500px;
+}
+.center-post-container{
+  display: block;
+  justify-content: center;
+  
+}
+.post_container .container .input-group {
+  width: 100%;
+}
+.post{
+  width: 500px;
+  height: 900px;
+  overflow-y: auto; /* Use auto to only show scrollbars when necessary */
+  overflow-x: hidden;
+  padding: 5px; /* Optional: Adds some padding inside the container */
+  box-sizing: border-box;
+}
 
 .content-container {
+  box-sizing: border-box;
   margin: 0 auto; /* Center the card horizontally */
-  width: max-content; /* Adjust the width as needed */
-  margin-top: 10%; /* Add top margin to push it down */
+  width: 450px ; /* Adjust the width as needed */
 }
 .swiper-wrapper{
   width: max-content;
@@ -205,6 +246,9 @@ body {
 }
 .specific_user{
 display:flex;
+justify-content: space-evenly;
+flex-wrap: wrap;
+width: 100%;
 }
 .comment_div {
   max-height: 200px; /* Set a maximum height to enable scrolling */
@@ -303,7 +347,7 @@ display:flex;
   height: max-content;
 }
 .contacts img{
-  width: 40px;
+  width: 10px;
 }
 .logo_img img{
   height:max-content;
@@ -324,17 +368,21 @@ display:flex;
   padding: 20px;
   display: flex; 
   flex-direction: column;
-  margin-top:13% ;
 }
 
 .swiper-slide {
-  width: 493.6px; /* Double the width */
-  height: 300px; /* Double the height */
+  width: 353.6px; /* Double the width */
+  height: 250px; /* Double the height */
   position: relative;
   overflow: hidden;
   margin:auto 35px;
 }
-
+#suggestionsBox{
+  font-style: oblique;
+  color: #474545;
+  font-weight: bold;
+  cursor: pointer;
+}
 .swiper-slide video, .swiper-slide img {
   width: 100%; /* Double the width of the video or image */
   height: auto;
@@ -359,10 +407,14 @@ display:flex;
   width: 50%;
 }
 .contacts div img{
-  width:50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   padding: 0;
-  margin: 0;
+  margin:15px 0 0 0;
+}
+.container-fluid .navbar-brand .logo_img{
+  padding: 0;
+  float: left;
 }
 .container{
   padding: 0;
@@ -600,12 +652,14 @@ padding: auto;
     padding:auto;
     margin-top: 10px;
   }
-
+.center-post-container{
+  margin: 10px 0;
+}
   .contacts div p{
     display:flex;
   }
   .content-container{
-    width: max-content;
+    width: 450px;
   }
   .text-center{
     display: flex;
@@ -623,6 +677,7 @@ padding: auto;
     width: 100%;
     padding: 0;
   }
+ 
   .content-div{
     width: 100%;
   }
@@ -691,7 +746,7 @@ padding: auto;
     display:flex;
   }
   .content-container{
-    width: max-content;
+    width: 450px;
   }
   .text-center{
     display: flex;
@@ -719,6 +774,10 @@ padding: auto;
     position: absolute;
     z-index: 10; 
   }
+  
+.center-post-container{
+  margin: 10px 0;
+}
   .image_border h4 a,.image_border h4 a i{
     color: white;
     display: flex;
@@ -778,7 +837,7 @@ padding: auto;
     display:flex;
   }
   .content-container{
-    width: max-content;
+    width: 450px;
   }
   .text-center{
     display: flex;
@@ -798,4 +857,5 @@ padding: auto;
   flex-wrap: wrap;
   text-decoration: none;
 }
+
 }

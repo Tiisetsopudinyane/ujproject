@@ -7,7 +7,7 @@ conn = sqlite3.connect('blog.db')
 cursor = conn.cursor()
 #cursor.execute(''' drop table pOST''')
 #cursor.execute(''' drop table Comment''')
-#cursor.execute(''' drop table Likes''')
+# cursor.execute(''' drop table Messages''')
 
 # Create replies table if not exists
 cursor.execute('''
@@ -100,8 +100,19 @@ cursor.execute('''
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     replyTo INTEGER, -- This column is used to store the messageId of the message this is a reply to
     FOREIGN KEY (senderId) REFERENCES User(userId),
-    FOREIGN KEY (receiverId) REFERENCES User(userId),
-    FOREIGN KEY (replyTo) REFERENCES Messages(messageId)
+    FOREIGN KEY (receiverId) REFERENCES User(userId)
+)
+''')
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Reply (
+    replyId INTEGER PRIMARY KEY,
+    senderId INTEGER NOT NULL,
+    receiverId INTEGER NOT NULL,
+    reply TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (senderId) REFERENCES User(userId),
+    FOREIGN KEY (receiverId) REFERENCES Messages(receiverId),
+    FOREIGN KEY (senderId) REFERENCES Messages(senderId)
 )
 ''')
 

@@ -4,7 +4,7 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 import base64
 import io
 from PIL import Image
@@ -71,21 +71,35 @@ def deleteProfile_picture():
 @app.route("/post")
 def post():
     counts=countPosts()
+    # Get pagination parameters
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    offset = (page - 1) * limit
+    
+    post=load_Posts(offset=offset, limit=limit)
+    media=[]
+    if "message" not in post:
+        for item in post:
+            
+            if "media" in item:
+                images=item['media'][1:-1].split(', ')
+                images=[s.strip('"') for s in images]
+                media.append(images)
+                for picture_list in media:
+                    item['media']=picture_list
     campaigns = select_all_campaigns()
-    print(counts)
     if 'user_id' not in session:
         return render_template("login.html")
     
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
-    return render_template("post.html",counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+    return render_template("post.html",post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
 
     
 @app.route("/loadposts/<string:name>",methods=["GET"])
 def loadposts(name):
     posts=loadPosts(name)
-    print(posts)
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
@@ -103,8 +117,15 @@ def loadposts(name):
                     
         return render_template("postcontent.html",post=posts,user=userdata,profileimage=profileimage)
     else:
-        print("message")
         return redirect(url_for("post"))
+
+
+@app.route('/get_full_post', methods=['GET'])
+def get_full_post():
+    column = request.args.get('column')
+    value = request.args.get('value')
+    post_content = get_full_post_content(column, value)
+    return jsonify(post_content)
 
 
 @app.route('/update_campaign', methods=['GET', 'POST'])
@@ -128,7 +149,6 @@ def update_campaign():
 def loadmessages():
     userId=session["user_id"]
     messages=selectAllmessages(userId)
-    print(messages)
     return render_template("inbox.html",messages=messages)
     
 
@@ -139,13 +159,12 @@ def selectedUserProfile(user_id):
     user = selectAllfromUser_with_Id(user_id)
     sender_id = session.get("user_id")  # Using .get() to avoid KeyError if "user_id" is not in session
     sender_data = selectAllfromUser_with_Id(sender_id)
-    reply_to = request.args.get("reply_to")  # If "reply_to" is sent in the form, it means it's a reply
-    print(reply_to)
+    reply_to = request.args.get("reply_to")
     if request.method == "POST":
         message = request.form.get("message")
         
         if reply_to:  # Check if it's a reply
-            insertreplyMessages(sender_id, user_id, message, reply_to)
+            insertreplyMessages(sender_id, user_id, reply, reply_to)
         else:
             insertMessages(sender_id, user_id, message)
         return redirect(url_for("post"))
@@ -164,14 +183,13 @@ def login():
         
         user_credentials= loginCredentials(email,password)
         counts=countPosts()
-        print(counts)
         campaigns = select_all_campaigns()
         # counts=jsonify(counts)
         user=selectAllfromUser(email)
         media=[]
         if user_credentials:
             session["user_id"]=user['userId']
-            return render_template("post.html",counts=counts,campaigns=campaigns,user=user,media=media)
+            return redirect(url_for("post"))
              
     return render_template("login.html")
 
@@ -353,15 +371,6 @@ def comments_list(postid):
         redirect('login')
     user=selectAllfromUser_with_Id(userId)
     postid=int(postid)
-    
-    # post=loadPosts()
-    # media=[]
-    # for item in post:
-    #     images=item['media'][1:-1].split(', ')
-    #     images=[s.strip('"') for s in images]
-    #     media.append(images)
-    #     for picture_list in media:
-    #         item['media']=picture_list
     comment_list =loadCommentsandUser(postid)
     return jsonify(comment_list)
 
@@ -604,7 +613,44 @@ def reset_password():
     return render_template('reset_password.html')
 
 
+@app.route('/search_suggestions')
+def search_suggestions():
+    query = request.args.get('q', '')
+    if query:
+        suggestions = get_suggestions(query)
+        return jsonify(suggestions)
+    return jsonify([])
 
+
+@app.route('/search', methods=["POST","GET"])
+def search():
+    search = request.form.get('searchBox')
+    if request.method=="POST":
+        # Get pagination parameters
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 10))
+        offset = (page - 1) * limit
+        post = get_full_post_content(search,offset=offset, limit=limit)
+        counts=countPosts()
+       
+        media=[]
+        if "message" not in post:
+            for item in post:
+            
+                if "media" in item:
+                    images=item['media'][1:-1].split(', ')
+                    images=[s.strip('"') for s in images]
+                    media.append(images)
+                    for picture_list in media:
+                        item['media']=picture_list
+        campaigns = select_all_campaigns()
+        if 'user_id' not in session:
+            return render_template("login.html")
+    
+        userId=session["user_id"]
+        userdata=selectAllfromUser_with_Id(userId)
+        profileimage = userdata['images']
+        return render_template("post.html",post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
 
 
 if __name__ =="__main__":

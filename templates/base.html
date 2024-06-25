@@ -27,6 +27,42 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+     <script>
+      function fetchSuggestions() {
+    const query = document.getElementById('searchInput').value;
+    if (query.length > 2) { // Start searching after 3 characters
+        fetch(`/search_suggestions?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                let suggestionsBox = document.getElementById("suggestionsBox");
+                suggestionsBox.innerHTML = "";
+                data.forEach(item => {
+                    let suggestion = document.createElement("div");
+                    suggestion.innerHTML = item[0];
+                    suggestion.dataset.column = item[1]; // Store column name
+                    suggestion.classList.add('suggestion-item');
+                    suggestion.onclick = function() {
+                        selectSuggestion(item[0], item[1]);
+                    };
+                    suggestionsBox.appendChild(suggestion);
+                    
+                });
+            });
+    }
+}
+
+function selectSuggestion(value, column) {
+    document.getElementById('searchInput').value = value; // Set suggestion in search box
+    // fetch(`/get_full_post?column=${column}&value=${value}`)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         const postContentDiv = document.getElementById('post-content');
+    //         postContentDiv.innerHTML = JSON.stringify(data, null, 2); // Display full post content
+    //     });
+    suggestionsBox.innerHTML="";
+}
+
+    </script>
   </head>
   <body>
     <div class="container-fluid nav_header">
