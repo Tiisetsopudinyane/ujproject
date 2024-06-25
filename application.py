@@ -165,7 +165,7 @@ def selectedUserProfile(user_id):
         message = request.form.get("message")
         
         if reply_to:  # Check if it's a reply
-            insertreplyMessages(sender_id, user_id, reply, reply_to)
+            insertreplyMessages(sender_id, user_id, message, reply_to)
         else:
             insertMessages(sender_id, user_id, message)
         return redirect(url_for("post"))
@@ -434,7 +434,7 @@ def like(postid,name):
             count=count+count
     # return count, to check if is one,button must be blue,
     # if count is zero the button color must be white
-    return redirect(url_for('loadposts',name=name))
+    return redirect(url_for('post',name=name))
 
     
 @app.route('/updateUserInfo',methods=['POST'])

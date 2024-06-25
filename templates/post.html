@@ -7,19 +7,31 @@
     </a>
   </li>
   <li class="nav-item p-2">
-    <a name="" type="button" class="btn btn-primary" href="{{ url_for('loadmessages') }}"><i
-        class="fas fa-envelope directMessages"></i> Direct
-      Messages</a>
+    <a
+      name=""
+      type="button"
+      class="btn btn-primary"
+      href="{{ url_for('loadmessages') }}"
+      ><i class="fas fa-envelope directMessages"></i> Direct Messages</a
+    >
   </li>
   <li class="nav-item p-2">
-    <a name="createPost_{{ user.user_id }}" type="button" class="btn btn-primary"
-      href="{{ url_for('createNewPost') }}"><i class="fas fa-user-plus"></i>
+    <a
+      name="createPost_{{ user.user_id }}"
+      type="button"
+      class="btn btn-primary"
+      href="{{ url_for('createNewPost') }}"
+      ><i class="fas fa-user-plus"></i>
       Create Post
     </a>
   </li>
   <li class="nav-item p-2">
-    <a type="button" name="logout" class="logout btn btn-primary" href="{{url_for('logout')}}"><i
-        class="fas fa-sign-out-alt"></i>
+    <a
+      type="button"
+      name="logout"
+      class="logout btn btn-primary"
+      href="{{url_for('logout')}}"
+      ><i class="fas fa-sign-out-alt"></i>
       Log-out
     </a>
   </li>
@@ -35,17 +47,26 @@
             <div class="box"></div>
             <div class="image_border">
               {% if not user['images'] %}
-              <img src="../static/images/user.png" class="img-fluid rounded-circle mb-3" alt="User Image" />
+              <img
+                src="../static/images/user.png"
+                class="img-fluid rounded-circle mb-3"
+                alt="User Image"
+              />
               {% else %}
-              <img src="../{{user.images}}" class="img-fluid rounded-circle mb-3" alt="User Image" />
+              <img
+                src="../{{user.images}}"
+                class="img-fluid rounded-circle mb-3"
+                alt="User Image"
+              />
               {% endif %}
               <h4>
-                <a href="{{ url_for('userProfile') }}">{{ user.first_name }} {{ user.last_name }}
-                  <i class="fa fa-pencil-alt edit"></i></a>
+                <a href="{{ url_for('userProfile') }}"
+                  >{{ user.first_name }} {{ user.last_name }}
+                  <i class="fa fa-pencil-alt edit"></i
+                ></a>
               </h4>
             </div>
             <div class="col-md-5 dm_occ">
-
               <p>Occupation: {{ user.occupation }}</p>
             </div>
           </div>
@@ -54,386 +75,401 @@
           <p>Bio: {{ user.bio }}</p>
         </div>
       </div>
-        <div class="row">
-          <div class="container center-post-container">
-            <div class="post_container">
-        
-              <div class="row">
-                  <div class="container">
-                    <form action="/search" method="post">
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <div class="input-group">
-                          <input name="searchBox" type="text" id="searchInput" onkeyup="fetchSuggestions()" class="form-control" placeholder="Search...">
-                          
-                          <div class="input-group-append">
-                              <button class="btn btn-outline-secondary" type="submit">
-                                  <i class="bi bi-search"></i>Search
-                              </button>
-                          </div>   
-                              <div>
-                                <!-- <a href="{{url_for('post')}}"><i class="fas fa-sync" id="refreshIcon"></i></a> -->
-                              </div>                       
-                      </div>
-
-                    </form>
-                      <div id="suggestionsBox"></div>
-                      <div id="post-content"></div>
-                  </div>
-              </div>
-          
-            </div>
-            <br>
-            <div class="post">
-              <div class="post_container">
-                {% if post is not none and post|length > 0 %} {% for data in post %}
-      <div class="card content-container">
-        <div class="card-header">
-          <h5 id="Username">
-            By:
-            <a href="/selectedUserProfile/{{ data.user_id }}"
-              >{{ data.author }}</a
-            >
-          </h5>
-        </div>
-        <div class="card-body">
-          <h6 id="title">Title: {{ data.title }}</h6>
-          <p id="description">Description: {{ data.description }}</p>
-          <small class="datePosted"
-            >Posted: {{ data.post_date }}, {{ data.post_time }}</small
-          >
-          <div class="swiper">
-            <div class="swiper-wrapper">
-              <!-- Dynamic media items will be inserted here -->
-              {% for data in data.media%}
-              <div class="swiper-slide">
-                {% if data.endswith('.mp4') %}
-                <video controls onclick="openVideo('../{{ data }}')">
-                  <source src="../{{ data }}" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-                {% else %}
-                <img src="../{{data}}" alt="image" />
-                {% endif %}
-              </div>
-              {% endfor %}
-              
-            </div>
-            <!-- Add Pagination -->
-            <div class="swiper-pagination"></div>
-            <!-- Add Previous Button -->
-            <div class="swiper-button-prev"></div>
-            <!-- Add Next Button -->
-            <div class="swiper-button-next"></div>
-          </div>
-          <div class="share-icons" id="shareIcons_{{ data.postId }}"></div>
-  
-          <div
-            class="container share-like-comment"
-            x-data="{ commentBoxOpen: false }"
-          >
+      <div class="row">
+        <div class="container center-post-container">
+          <div class="post_container">
             <div class="row">
-              <div class="col-md-">
-                <div class="like-comment-share">
-                  <!-- Like button -->
-                  <div class="btn-group mr-2" role="group">
-                    <form
-                      action="{{url_for('like', postid=data['postId'],name=data['title'])}}"
-                      method="Post"
-                    >
-                      <input
-                        type="hidden"
-                        name="csrf_token"
-                        value="{{ csrf_token() }}"
-                      />
-                      <button
-                        id="btn_like"
-                        type="submit"
-                        onclick="Togglebtn()"
-                        class="like-btn btn-like-comment-share btn btn-outline-primary"
-                      >
-                        <i class="fas fa-thumbs-up" id="like_icon"></i>{{
-                        data.likes }}
-                        <span id="like_text">Likes</span>
+              <div class="container">
+                <form action="/search" method="post">
+                  <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                  />
+                  <div class="input-group">
+                    <input
+                      name="searchBox"
+                      type="text"
+                      id="searchInput"
+                      onkeyup="fetchSuggestions()"
+                      class="form-control"
+                      placeholder="Search..."
+                    />
+
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i>Search
                       </button>
-                    </form>
-                  </div>
-  
-                  <!-- Comment button and box -->
-                  <div class="btn-group mr-2" role="group">
-                    <form
-                      id="commentsForm"
-                      action="{{url_for('comments_list', postid=data.postId)}}"
-                      method="GET"
-                    >
-                      <input
-                        type="hidden"
-                        name="csrf_token"
-                        value="{{ csrf_token() }}"
-                      />
-                      <button
-                        id="{{data.postId}}"
-                        type="submit"
-                        @click.prevent="commentBoxOpen = !commentBoxOpen; handleFormSubmit(event)"
-                        class="btn_comment btn-like-comment-share btn btn-outline-primary"
-                      >
-                        <i class="fas fa-comment"></i>
-                        <span>{{ data.comments }}</span>Comments
-                      </button>
-                    </form>
-                  </div>
-  
-                  <!-- Share button -->
-                  <div class="btn-group mr-2" role="group">
-                    <form
-                      action="{{ url_for('share', postid=data.postId) }}"
-                      method="GET"
-                    >
-                      <input
-                        type="hidden"
-                        name="csrf_token"
-                        value="{{ csrf_token() }}"
-                      />
-                      <button
-                        onclick="handleFormSubmit_share(event)"
-                        id="shareBtn_{{ data.postId }}"
-                        type="submit"
-                        class="btn_share btn-like-comment-share btn btn-outline-primary share-button"
-                      >
-                        <i class="fas fa-share"></i>
-                        <span>{{ data.shares }}</span> Share
-                      </button>
-                    </form>
-                  </div>
-                </div>
-                <div class="comment-box" x-show="commentBoxOpen">
-                  <h6>Comments</h6>
-                  <div class="comments_outer_div">
-                    <div class="comment_div" id="commentsContainer">
-                      <ul class="comments_ul"></ul>
+                    </div>
+                    <div>
+                      <!-- <a href="{{url_for('post')}}"><i class="fas fa-sync" id="refreshIcon"></i></a> -->
                     </div>
                   </div>
-                  <!-- Comment form -->
-                  <div class="mt-2"></div>
-                  <form
-                    action="{{url_for('comments', postid=data.postId)}}"
-                    method="POST"
+                </form>
+                <div id="suggestionsBox"></div>
+                <div id="post-content"></div>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="post">
+            <div class="post_container">
+              {% if post is not none and post|length > 0 %} {% for data in post
+              %}
+              <div class="card content-container">
+                <div class="card-header">
+                  <h5 id="Username">
+                    By:
+                    <a href="/selectedUserProfile/{{ data.user_id }}"
+                      >{{ data.author }}</a
+                    >
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <h6 id="title">Title: {{ data.title }}</h6>
+                  <p id="description">Description: {{ data.description }}</p>
+                  <small class="datePosted"
+                    >Posted: {{ data.post_date }}, {{ data.post_time }}</small
                   >
-                    <input
-                      type="hidden"
-                      name="csrf_token"
-                      value="{{ csrf_token() }}"
-                    />
-                    <textarea
-                      name="comment"
-                      class="form-control"
-                      rows="4"
-                      cols="30"
-                      required
-                      placeholder="Write your comment here..."
-                    ></textarea>
-                    <button class="btn btn-primary mt-2" type="submit">
-                      Post Comment
-                    </button>
-                  </form>
+                  <div class="swiper">
+                    <div class="swiper-wrapper">
+                      <!-- Dynamic media items will be inserted here -->
+                      {% for data in data.media%}
+                      <div class="swiper-slide">
+                        {% if data.endswith('.mp4') %}
+                        <video controls onclick="openVideo('../{{ data }}')">
+                          <source src="../{{ data }}" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                        {% else %}
+                        <img src="../{{data}}" alt="image" />
+                        {% endif %}
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
+                    <!-- Add Previous Button -->
+                    <div class="swiper-button-prev"></div>
+                    <!-- Add Next Button -->
+                    <div class="swiper-button-next"></div>
+                  </div>
+                  <div
+                    class="share-icons"
+                    id="shareIcons_{{ data.postId }}"
+                  ></div>
+
+                  <div
+                    class="container share-like-comment"
+                    x-data="{ commentBoxOpen: false }"
+                  >
+                    <div class="row">
+                      <div class="col-md-">
+                        <div class="like-comment-share">
+                          <!-- Like button -->
+                          <div class="btn-group mr-2" role="group">
+                            <form
+                              action="{{url_for('like', postid=data['postId'],name=data['title'])}}"
+                              method="Post"
+                            >
+                              <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                              />
+                              <button
+                                id="btn_like"
+                                type="submit"
+                                onclick="Togglebtn()"
+                                class="like-btn btn-like-comment-share btn btn-outline-primary"
+                              >
+                                <i class="fas fa-thumbs-up" id="like_icon"></i
+                                >{{ data.likes }}
+                                <span id="like_text">Likes</span>
+                              </button>
+                            </form>
+                          </div>
+
+                          <!-- Comment button and box -->
+                          <div class="btn-group mr-2" role="group">
+                            <form
+                              id="commentsForm"
+                              action="{{url_for('comments_list', postid=data.postId)}}"
+                              method="GET"
+                            >
+                              <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                              />
+                              <button
+                                id="{{data.postId}}"
+                                type="submit"
+                                @click.prevent="commentBoxOpen = !commentBoxOpen; handleFormSubmit(event)"
+                                class="btn_comment btn-like-comment-share btn btn-outline-primary"
+                              >
+                                <i class="fas fa-comment"></i>
+                                <span>{{ data.comments }}</span>Comments
+                              </button>
+                            </form>
+                          </div>
+
+                          <!-- Share button -->
+                          <div class="btn-group mr-2" role="group">
+                            <form
+                              action="{{ url_for('share', postid=data.postId) }}"
+                              method="GET"
+                            >
+                              <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                              />
+                              <button
+                                onclick="handleFormSubmit_share(event)"
+                                id="shareBtn_{{ data.postId }}"
+                                type="submit"
+                                class="btn_share btn-like-comment-share btn btn-outline-primary share-button"
+                              >
+                                <i class="fas fa-share"></i>
+                                <span>{{ data.shares }}</span> Share
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                        <div class="comment-box" x-show="commentBoxOpen">
+                          <h6>Comments</h6>
+                          <div class="comments_outer_div">
+                            <div class="comment_div" id="commentsContainer">
+                              <ul class="comments_ul"></ul>
+                            </div>
+                          </div>
+                          <!-- Comment form -->
+                          <div class="mt-2"></div>
+                          <form
+                            action="{{url_for('comments', postid=data.postId)}}"
+                            method="POST"
+                          >
+                            <input
+                              type="hidden"
+                              name="csrf_token"
+                              value="{{ csrf_token() }}"
+                            />
+                            <textarea
+                              name="comment"
+                              class="form-control"
+                              rows="4"
+                              cols="30"
+                              required
+                              placeholder="Write your comment here..."
+                            ></textarea>
+                            <button class="btn btn-primary mt-2" type="submit">
+                              Post Comment
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              {% endfor %} {% endif %}
+              <div id="load-more-trigger"></div>
             </div>
           </div>
         </div>
       </div>
-  
-      {% endfor %} {% endif %}
-      <div id="load-more-trigger"></div>
-              </div>
-            
-            </div>
-            </div>
-        </div>
-        
-    <div class="col-3 col-md-3 col-sm bio-container">
-            <div class="campaign">
-              <h2>HealthGenius - Advancing Personalized Healthcare</h2>
-              <p>
-                <strong>Overview:</strong> HealthGenius is a healthcare startup
-                leveraging AI and data analytics to personalize treatment plans and
-                improve patient outcomes.
-              </p>
-              <button class="btn btn-primary" onclick="toggleReadMore('health')">
-                Read More
-              </button>
-              <div id="health" class="read-more">
-                <p><strong>Funding Goal:</strong> $30,000</p>
-                <p><strong>Duration:</strong> 60 days</p>
-                <p>
-                  <strong>Description:</strong> Our platform analyzes patient data
-                  to provide personalized treatment recommendations, reducing
-                  healthcare costs and improving patient satisfaction.
-                </p>
-              </div>
-            </div>
 
-            <div class="campaign">
-              <h2>CleanTech Solutions - Sustainable Energy for Tomorrow</h2>
-              <p>
-                <strong>Overview:</strong> CleanTech Solutions develops renewable
-                energy technologies to address climate change and promote
-                sustainable development.
-              </p>
-              <button class="btn btn-primary" onclick="toggleReadMore('health')">
-                Read More
-              </button>
-              <div id="clean" class="read-more">
-                <p><strong>Funding Goal:</strong> $70,000</p>
-                <p><strong>Duration:</strong> 90 days</p>
-                <p>
-                  <strong>Description:</strong> Our innovative solar and wind energy
-                  solutions offer clean and affordable alternatives to traditional
-                  fossil fuels, helping to combat climate change.
-                </p>
-              </div>
-            </div>
+      <div class="col-3 col-md-3 col-sm bio-container">
+        <div class="campaign">
+          <h2>HealthGenius - Advancing Personalized Healthcare</h2>
+          <p>
+            <strong>Overview:</strong> HealthGenius is a healthcare startup
+            leveraging AI and data analytics to personalize treatment plans and
+            improve patient outcomes.
+          </p>
+          <button class="btn btn-primary" onclick="toggleReadMore('health')">
+            Read More
+          </button>
+          <div id="health" class="read-more">
+            <p><strong>Funding Goal:</strong> $30,000</p>
+            <p><strong>Duration:</strong> 60 days</p>
+            <p>
+              <strong>Description:</strong> Our platform analyzes patient data
+              to provide personalized treatment recommendations, reducing
+              healthcare costs and improving patient satisfaction.
+            </p>
           </div>
-        
+        </div>
+
+        <div class="campaign">
+          <h2>CleanTech Solutions - Sustainable Energy for Tomorrow</h2>
+          <p>
+            <strong>Overview:</strong> CleanTech Solutions develops renewable
+            energy technologies to address climate change and promote
+            sustainable development.
+          </p>
+          <button class="btn btn-primary" onclick="toggleReadMore('health')">
+            Read More
+          </button>
+          <div id="clean" class="read-more">
+            <p><strong>Funding Goal:</strong> $70,000</p>
+            <p><strong>Duration:</strong> 90 days</p>
+            <p>
+              <strong>Description:</strong> Our innovative solar and wind energy
+              solutions offer clean and affordable alternatives to traditional
+              fossil fuels, helping to combat climate change.
+            </p>
+          </div>
+        </div>
       </div>
-      <div class="mt-5"></div>
-      <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    let page = 1;
-    const limit = 10;
-    const loadMoreTrigger = document.getElementById('load-more-trigger');
-
-    const loadMorePosts = () => {
-        page++;
-        fetch(`/post?page=${page}&limit=${limit}`)
-            .then(response => response.text())
-            .then(data => {
-                // Append new posts to the post container
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                const newPosts = doc.querySelector('.post_container').innerHTML;
-                document.querySelector('.post_container').insertAdjacentHTML('beforeend', newPosts);
-            });
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            loadMorePosts();
-        }
-    }, { threshold: 1.0 });
-
-    observer.observe(loadMoreTrigger);
-});
-
-        function toggleReadMore(id) {
-          var moreText = document.getElementById(id);
-          if (moreText.style.display === "none") {
-            moreText.style.display = "block";
-          } else {
-            moreText.style.display = "none";
-          }
-        }
-
-        (() => {
-          console.log(name);
-          function fetchPostCount(name) {
-            console.log(name);
-            fetch(`/count/${name}`)
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json(); // Assuming the API returns JSON
-              })
-              .then((data) => {
-                if ("count" in data) {
-                  var countSpan = button.querySelector("span");
-                  if (countSpan) {
-                    countSpan.textContent = `(${data.count}) `;
-                  }
-                } else if ("message" in data) {
-                  console.log(data.message);
-                } else {
-                  console.log("Unknown response format");
-                }
-              })
-              .catch((error) => {
-                console.error(
-                  "There was a problem with the fetch operation:",
-                  error
-                );
-              });
-          }
-
-          var buttons = document.querySelectorAll(".gradient-div");
-          // Attach fetchPostCount function to each button's onclick event
-          buttons.forEach((button) => {
-            button.addEventListener("click", function () {
-              console.log("button " + button.getAttribute("name"));
-              fetchPostCount(button.getAttribute("name"));
-            });
-          });
-        })();
-
-        function loadComentsInfinityScrolling(post) {
-          let count = 0;
-          const container = document.getElementsByClassName("postContainer");
-          while (count < post.length) {
-            container.appendChild(post);
-          }
-        }
-
-        var like_icon = document.getElementById("like_icon");
-        var btn_like = document.getElementById("btn_like");
-        var like_text = document.getElementById("like_text");
-        function Togglebtn() {
-          if (like_icon.style.color === "white") {
-            like_icon.style.color = "blue";
-            btn_like.style.backgroundColor = "white";
-            like_text.innerText = "Like";
-            btn_like.style.color = "blue"; // Change text color to blue
-          } else {
-            like_icon.style.color = "white";
-            btn_like.style.backgroundColor = "blue";
-            like_text.innerText = "Liked";
-            btn_like.style.color = "white"; // Change text color to white
-          }
-        }
-
-        async function fetchPosts() {
-          try {
-            const response = await fetch("/loadpost");
-            if (!response.ok) {
-              throw new Error(`Failed to fetch posts: ${response.statusText}`);
-            }
-            const data = await response.json();
-            console.log(data);
-            return data;
-          } catch (error) {
-            console.error("Error fetching posts:", error);
-            return [];
-          }
-        }
-
-        // Function to render posts using Handlebars.js
-        async function renderPosts() {
-          const postsContainer = document.getElementById("postsContainer");
-          const postTemplate = document.getElementById("postTemplate").innerHTML;
-
-          // Fetch posts
-          const posts = await fetchPosts();
-
-          // Compile Handlebars template
-          const template = Handlebars.compile(postTemplate);
-
-          const html = template({ posts });
-          postsContainer.innerHTML = html;
-        }
-
-        // Render posts when the page loads
-        document.addEventListener("DOMContentLoaded", renderPosts);
-      </script>
     </div>
-    {% endblock content %}<br>
+    <div class="mt-5"></div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let page = 1;
+        const limit = 10;
+        const loadMoreTrigger = document.getElementById("load-more-trigger");
+
+        const loadMorePosts = () => {
+          page++;
+          fetch(`/post?page=${page}&limit=${limit}`)
+            .then((response) => response.text())
+            .then((data) => {
+              // Append new posts to the post container
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(data, "text/html");
+              const newPosts = doc.querySelector(".post_container").innerHTML;
+              document
+                .querySelector(".post_container")
+                .insertAdjacentHTML("beforeend", newPosts);
+            });
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              loadMorePosts();
+            }
+          },
+          { threshold: 1.0 }
+        );
+
+        observer.observe(loadMoreTrigger);
+      });
+
+      function toggleReadMore(id) {
+        var moreText = document.getElementById(id);
+        if (moreText.style.display === "none") {
+          moreText.style.display = "block";
+        } else {
+          moreText.style.display = "none";
+        }
+      }
+
+      (() => {
+        console.log(name);
+        function fetchPostCount(name) {
+          console.log(name);
+          fetch(`/count/${name}`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json(); // Assuming the API returns JSON
+            })
+            .then((data) => {
+              if ("count" in data) {
+                var countSpan = button.querySelector("span");
+                if (countSpan) {
+                  countSpan.textContent = `(${data.count}) `;
+                }
+              } else if ("message" in data) {
+                console.log(data.message);
+              } else {
+                console.log("Unknown response format");
+              }
+            })
+            .catch((error) => {
+              console.error(
+                "There was a problem with the fetch operation:",
+                error
+              );
+            });
+        }
+
+        var buttons = document.querySelectorAll(".gradient-div");
+        // Attach fetchPostCount function to each button's onclick event
+        buttons.forEach((button) => {
+          button.addEventListener("click", function () {
+            console.log("button " + button.getAttribute("name"));
+            fetchPostCount(button.getAttribute("name"));
+          });
+        });
+      })();
+
+      function loadComentsInfinityScrolling(post) {
+        let count = 0;
+        const container = document.getElementsByClassName("postContainer");
+        while (count < post.length) {
+          container.appendChild(post);
+        }
+      }
+
+      var like_icon = document.getElementById("like_icon");
+      var btn_like = document.getElementById("btn_like");
+      var like_text = document.getElementById("like_text");
+      function Togglebtn() {
+        if (like_icon.style.color === "white") {
+          like_icon.style.color = "blue";
+          btn_like.style.backgroundColor = "white";
+          like_text.innerText = "Like";
+          btn_like.style.color = "blue"; // Change text color to blue
+        } else {
+          like_icon.style.color = "white";
+          btn_like.style.backgroundColor = "blue";
+          like_text.innerText = "Liked";
+          btn_like.style.color = "white"; // Change text color to white
+        }
+      }
+
+      async function fetchPosts() {
+        try {
+          const response = await fetch("/loadpost");
+          if (!response.ok) {
+            throw new Error(`Failed to fetch posts: ${response.statusText}`);
+          }
+          const data = await response.json();
+          console.log(data);
+          return data;
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+          return [];
+        }
+      }
+
+      // Function to render posts using Handlebars.js
+      async function renderPosts() {
+        const postsContainer = document.getElementById("postsContainer");
+        const postTemplate = document.getElementById("postTemplate").innerHTML;
+
+        // Fetch posts
+        const posts = await fetchPosts();
+
+        // Compile Handlebars template
+        const template = Handlebars.compile(postTemplate);
+
+        const html = template({ posts });
+        postsContainer.innerHTML = html;
+      }
+
+      // Render posts when the page loads
+      document.addEventListener("DOMContentLoaded", renderPosts);
+    </script>
+  </div>
+  {% endblock content %}<br />
+</div>

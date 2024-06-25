@@ -849,12 +849,12 @@ def sharing(postid):
     finally:
         conn.close()
 
-def insertreplyMessages(sender_id, user_id, reply, replyTo):
+def insertreplyMessages(sender_id, receiverId, reply, replyTo):
     query="""INSERT INTO Reply (senderId, receiverId, reply,replyTo) VALUES (?, ?, ?,?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ senderId, receiverId, reply,replyTo])
+        cursor.execute(query, [ sender_id, receiverId, reply,replyTo])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)
@@ -863,12 +863,12 @@ def insertreplyMessages(sender_id, user_id, reply, replyTo):
 
 
 
-def Messages_replies(senderId, receiverId, reply_message,replyTo):
-    query="""INSERT INTO Messages_replies (senderId, receiverId, reply_message,replyTo) VALUES (?, ?, ?, ?)"""
+def insertMessages(senderId, receiverId, message):
+    query="""INSERT INTO Messages(senderId, receiverId, message) VALUES ( ?, ?, ?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ senderId, receiverId, reply_message,replyTo])
+        cursor.execute(query, [ senderId, receiverId, message])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)
@@ -997,24 +997,39 @@ def get_suggestions(query):
     return list(unique_results)
 
 
-def get_full_post_content(search,offset=0, limit=10):
+def get_full_post_content(search, offset=0, limit=10):
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
-
-    sql_query = f"SELECT * FROM Post WHERE title = ? ORDER BY post_date DESC, post_time DESC LIMIT ? OFFSET ?"
-    cursor.execute(sql_query,(search,limit, offset))
-    post_content = cursor.fetchall()
-    if post_content:
+    
+    # Get column names except 'media'
+    columns = get_column_names()
+    columns = [column for column in columns if column != 'media']
+    
+    # Constructing the SQL query dynamically to search across all relevant columns
+    sql_query = f"SELECT * FROM Post WHERE "
+    sql_query += " OR ".join([f"{column} LIKE ?" for column in columns])
+    sql_query += " ORDER BY post_date DESC, post_time DESC LIMIT ? OFFSET ?"
+    
+    # Execute the SQL query
+    try:
+        cursor.execute(sql_query, ['%' + search + '%' for _ in columns] + [limit, offset])
+        post_content = cursor.fetchall()
+        
+        if post_content:
             columns = [column[0] for column in cursor.description]
             post_list = []
             for row in post_content:
                 row_dict = dict(zip(columns, row))
                 post_list.append(row_dict)
-                print(post_list)
             return post_list
-    conn.close()
-    print(post_content)
-    return post_content
+        else:
+            print("No posts found matching the search criteria.")
+            return []
+    except sqlite3.Error as e:
+        print(f"Error executing SQLite query: {e}")
+        return []
+    finally:
+        conn.close()
 
 
 

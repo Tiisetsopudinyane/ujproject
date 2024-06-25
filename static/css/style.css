@@ -578,6 +578,14 @@ padding: auto;
   width: 80%;
 }
 @media only screen and (max-width:320px) {
+  .post{
+    width: 500px;
+    height: 900px;
+    overflow-y: auto; /* Use auto to only show scrollbars when necessary */
+    overflow-x: hidden;
+    padding: 5px; /* Optional: Adds some padding inside the container */
+    box-sizing: border-box;
+  }
   .logo_img{
     display: none;
   }
@@ -669,6 +677,14 @@ padding: auto;
   }
 }
 @media only screen and (max-width:450px) {
+  .post{
+    width: 500px;
+    height: 900px;
+    overflow-y: auto; /* Use auto to only show scrollbars when necessary */
+    overflow-x: hidden;
+    padding: 5px; /* Optional: Adds some padding inside the container */
+    box-sizing: border-box;
+  }
   .logo_img{
     display: none;
   }
@@ -758,6 +774,14 @@ padding: auto;
 }
 
 @media only screen and (max-width:800px) {
+  .post{
+    width: 500px;
+    height: 900px;
+    overflow-y: auto; /* Use auto to only show scrollbars when necessary */
+    overflow-x: hidden;
+    padding: 5px; /* Optional: Adds some padding inside the container */
+    box-sizing: border-box;
+  }
   .logo_img{
     display: none;
   }
@@ -848,6 +872,14 @@ padding: auto;
 }
 
 @media only screen and (max-width:1024px) {
+  .post{
+    width: 500px;
+    height: 900px;
+    overflow-y: auto; /* Use auto to only show scrollbars when necessary */
+    overflow-x: hidden;
+    padding: 5px; /* Optional: Adds some padding inside the container */
+    box-sizing: border-box;
+  }
 .index_container{
   margin-top: 25%;
 }
