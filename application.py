@@ -734,4 +734,4 @@ def search():
 
 if __name__ =="__main__":
 
-    app.run(debug=True, port=port)
+    app.run(debug=os.getenv('FLASK_ENV')=='development', port=port)

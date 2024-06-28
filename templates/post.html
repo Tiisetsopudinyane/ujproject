@@ -466,7 +466,91 @@
         const html = template({ posts });
         postsContainer.innerHTML = html;
       }
+      const btn_share = document.getElementsByClassName("btn_share");
 
+      for (let i = 0; i < btn_share.length; i++) {
+        btn_share[i].addEventListener("click", handleFormSubmit_share);
+      }
+      
+      async function handleFormSubmit_share(event) {
+        event.preventDefault();
+        const postId = event.target.id.split("_")[1];
+        console.log("post id:", postId);
+        try {
+          const data = await fetchpost(postId);
+          const { title, author, description, media } = data[0];
+      
+          // Create share links dynamically
+          const shareIconContainer = document.getElementById(
+            `shareIcons_${postId}`
+          );
+          if (shareIconContainer) {
+            shareIconContainer.innerHTML = "";
+            const facebookShareLink = document.createElement("a");
+            facebookShareLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+              author
+            )} ${encodeURIComponent(title)} ${encodeURIComponent(description)}`;
+            facebookShareLink.target = "_blank";
+            facebookShareLink.rel = "noopener";
+            facebookShareLink.className = "share-link facebook";
+            facebookShareLink.innerHTML =
+              '<i class="fab fa-facebook"></i> Facebook';
+      
+            const twitterSharLink = document.createElement("a");
+            twitterSharLink.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+              author
+            )} ${encodeURIComponent(title)} ${encodeURIComponent(
+              description
+            )} ${encodeURIComponent(media)}`;
+            twitterSharLink.target = "_blank";
+            twitterSharLink.rel = "noopener";
+            twitterSharLink.className = "share-link twitter";
+            twitterSharLink.innerText = " Twitter";
+      
+            const whatsappShareLink = document.createElement("a");
+            whatsappShareLink.href = `whatsapp://send?text=${title} ${author} ${description}`;
+            whatsappShareLink.target = "_blank";
+            whatsappShareLink.rel = "noopener";
+            whatsappShareLink.className = "share-link whatsapp";
+            whatsappShareLink.innerHTML =
+              '<i class="fab fa-whatsapp"></i> WhatsApp';
+      
+            const linkedInShareLink = document.createElement("a");
+            linkedInShareLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+              author
+            )} ${encodeURIComponent(title)} ${encodeURIComponent(description)}`;
+            linkedInShareLink.target = "_blank";
+            linkedInShareLink.rel = "noopener";
+            linkedInShareLink.className = "share-link linkedin";
+            linkedInShareLink.innerHTML =
+              '<i class="fab fa-linkedin"></i> LinkedIn';
+      
+            shareIconContainer.appendChild(facebookShareLink);
+            shareIconContainer.appendChild(twitterSharLink);
+            shareIconContainer.appendChild(whatsappShareLink);
+            shareIconContainer.appendChild(linkedInShareLink);
+          }
+        } catch (error) {
+          console.error("Error fetching post:", error);
+        }
+      }
+      
+      async function fetchpost(postId) {
+        try {
+          const response = await fetch(`/share/${postId}`);
+          if (!response.ok) {
+            throw new Error(`Error fetching post: ${response.statusText}`);
+          }
+          if (response.headers.get("Content-Type").includes("application/json")) {
+            const data = await response.json();
+            console.log(data);
+            return data;
+          }
+        } catch (error) {
+          console.error("Error fetching post:", error);
+          throw error;
+        }
+      }
       // Render posts when the page loads
       document.addEventListener("DOMContentLoaded", renderPosts);
     </script>
