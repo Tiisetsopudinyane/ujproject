@@ -4,7 +4,8 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
+                  ,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 from webscrapping import fetch_and_parse
 import base64
 import io
@@ -90,14 +91,13 @@ def post():
                 media.append(images)
                 for picture_list in media:
                     item['media']=picture_list
-    campaigns = select_all_campaigns()
     if 'user_id' not in session:
         return render_template("login.html")
     
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
-    return render_template("post.html",funds=funds,post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+    return render_template("post.html",funds=funds,post=post,counts=counts,user=userdata,profileimage=profileimage)
 
     
 @app.route("/loadposts/<string:name>",methods=["GET"])
@@ -131,22 +131,6 @@ def get_full_post():
     return jsonify(post_content)
 
 
-@app.route('/update_campaign', methods=['GET', 'POST'])
-def update_campaign():
-    if request.method == 'POST':
-        subject = request.form['subject']
-        overview = request.form['overview']
-        funding_goal = request.form['funding_goal']
-        duration = request.form['duration']
-        description = request.form['description']
-        
-        # Here you would add logic to update the campaign information in the database
-        # For example:
-        update_campaign(subject, overview, funding_goal, duration, description)
-        
-        return redirect(url_for('post'))
-    
-    return render_template('update_campaign.html')
 
 @app.route("/loadmessages")
 def loadmessages():
@@ -158,6 +142,8 @@ def loadmessages():
 @app.route("/admin")
 def admin():
     return render_template("admin.html")
+
+
 
 @app.route('/api/create-question', methods=['POST'])
 def create_question():
@@ -182,6 +168,44 @@ def create_question():
             survey(question,question_type,choices,custom_answer)
             custom_answer = None
 
+    return redirect(url_for('admin'))
+
+@app.route("/deletesurveyquestion/<int:id>")
+def deletesurveyquestion(id):
+    deleteSurveyQuestion(id)
+    
+    return redirect(url_for('surveyQuestions'))
+    
+    
+
+@app.route("/surveyQuestions")
+def surveyQuestions():
+    questions=retrievesurvey()
+    if 'message' in questions:
+        return redirect(url_for('admin'))
+    else:
+        return render_template('surveyquestions.html',questions=questions)
+        
+@app.route('/submit_customized_survey', methods=['POST'])
+def submit_customized_survey():
+    if request.method == 'POST':
+        checked_ids = request.form.get('checked_ids')
+        if checked_ids:
+            
+            checked_ids_list = checked_ids.split(',')
+            checked_ids_list=retrieveCustomizedsurvey(checked_ids_list)
+            
+            # Process the list of checked IDs here
+            print('Checked IDs:',checked_ids_list)
+            # Redirect or render another template as needed
+            return render_template('survey.html',checked_ids_list=checked_ids_list)
+        else:
+            # Handle case where no checkboxes were checked
+            print('No checkboxes were checked')
+            # Redirect or render another template as needed
+
+        # Example: Redirect back to the survey page
+        return redirect(url_for('surveyQuestions'))
 
 @app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
 def selectedUserProfile(user_id):
@@ -201,6 +225,7 @@ def selectedUserProfile(user_id):
     return render_template("selectedUserProfile.html",sender_id=sender_id, user=user, sender_data=sender_data)
 
 
+
 @app.route("/login",methods=["POST","GET"])
 def login():
     if request.method=="POST":
@@ -211,8 +236,7 @@ def login():
         password=encryptdata(password.strip())
         
         user_credentials= loginCredentials(email,password)
-        counts=countPosts()
-        campaigns = select_all_campaigns()
+        
         # counts=jsonify(counts)
         user=selectAllfromUser(email)
         media=[]
@@ -282,11 +306,11 @@ def createAccount():
             password=encryptdata(password.strip())
             insertUserIntodb( firstName, lastName, dob, gender, email, occupation,bio, contact, address, postalCode, password)
             counts=countPosts()
-            campaigns = select_all_campaigns()
+            
             user=selectAllfromUser(email)
             if 'userId' in user:
                 session["user_id"]=user['userId']
-                return render_template("post.html",counts=counts,campaigns=campaigns,user=user)
+                return render_template("post.html",counts=counts,user=user)
         else:
             return render_template("createAccount.html")
 
@@ -318,10 +342,8 @@ def userProfile():
     userdata=selectAllfromUser_with_Id(userId)
     user=selectUserInfo()
     userPosts=get_post(userId)
-    counts=countPosts()
-    campaigns = select_all_campaigns()
     if request.method=='POST':
-        return render_template('post.html',counts=counts,campaigns=campaigns,user=user)
+        return render_template('post.html',user=user)
     else:
         media=[]
         
@@ -713,7 +735,7 @@ def search():
         limit = int(request.args.get('limit', 10))
         offset = (page - 1) * limit
         post = get_full_post_content(search,offset=offset, limit=limit)
-        counts=countPosts()
+      
        
         media=[]
         if "message" not in post:
@@ -725,14 +747,15 @@ def search():
                     media.append(images)
                     for picture_list in media:
                         item['media']=picture_list
-        campaigns = select_all_campaigns()
+                        
         if 'user_id' not in session:
             return render_template("login.html")
     
         userId=session["user_id"]
         userdata=selectAllfromUser_with_Id(userId)
         profileimage = userdata['images']
-        return render_template("post.html",funds=funds,post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+        return render_template("post.html",funds=funds,post=post,user=userdata,profileimage=profileimage)
+
 
 
 if __name__ =="__main__":

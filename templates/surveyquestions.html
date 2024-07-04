@@ -1,0 +1,68 @@
+{%extends "base.html"%}
+
+{%block content%}
+<br><br><div class="mt-5 indexbar" ></div>
+<div class="row">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>List of survey questions<h1>
+            </div>
+            <div class="card-body surveyForm">
+                <form id="surveyForm" method="POST" action="{{ url_for('submit_customized_survey') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {%if questions%}
+                {%for question in questions%}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="checked_box" value="{{question.id}}" id="question_{{ question.id }}">
+                        <label class="form-check-label" for="question_{{ question.id }}">
+                            {{question.question}}
+                        </label>
+                        <a class="btn btn-outline-primary" href="{{url_for('deletesurveyquestion',id=question.id)}}">delete this qeustion</a>
+                    </div>
+                {%endfor%}
+                {%endif%}
+                
+                <button class="btn btn-outline-primary" type="submit">submit customized Survey</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select the form element
+        const form = document.getElementById('surveyForm');
+    
+        // Add event listener for form submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            // Array to store IDs of checked checkboxes
+            let checkedIds = [];
+    
+            // Select all checkboxes with class 'form-check-input'
+            const checkboxes = document.querySelectorAll('.form-check-input');
+    
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    checkedIds.push(checkbox.value);
+                }
+            });
+    
+            // Output the list of checked IDs (for testing/debugging)
+            console.log('Checked IDs:', checkedIds);
+    
+            // Add the list of checked IDs as a hidden input field in the form
+            const checkedInput = document.createElement('input');
+            checkedInput.setAttribute('type', 'hidden');
+            checkedInput.setAttribute('name', 'checked_ids');
+            checkedInput.setAttribute('value', checkedIds.join(',')); // Convert array to comma-separated string
+            form.appendChild(checkedInput);
+    
+            // Now submit the form
+            form.submit();
+        });
+    });
+</script>
+{%endblock%}

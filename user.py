@@ -958,14 +958,6 @@ def update_campaign(subject, overview, funding_goal, duration, description):
     conn.commit()
     conn.close()
     
-    
-def select_all_campaigns():
-    conn = sqlite3.connect('blog.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Campaigns')
-    campaigns = cursor.fetchall()
-    conn.close()
-    return campaigns
 
 
 
@@ -1046,5 +1038,78 @@ def survey(question,question_type,choices,custom_answer):
 
     return jsonify({'message': 'Question created successfully'}), 200
 
+def retrievesurvey():
+    query="""SELECT * FROM SurveyQuestions"""
+    conn=sqlite3.connect('blog.db')
+    cursor=conn.cursor()
+    
+    try:
+        cursor.execute(query,)
+        questions = cursor.fetchall()
+        
+        if questions:
+            columns = [column[0] for column in cursor.description]
+            questions_list = []
+            for question in questions:
+                questions_dict = dict(zip(columns, question))
+                questions_list.append(questions_dict)
+            return questions_list
+        else:
+            return {'message':'no questions found'}
+    except sqlite3.Error as e:
+        print('Error: ',e)
+    finally:
+        conn.close()
 
+def deleteSurveyQuestion(surveyId):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM SurveyQuestions  WHERE  id=?", (surveyId,))
+        conn.commit() 
+    except sqlite3.Error as e:
+        print('Error: ',e)  
+    finally:
+        conn.close()
+        
+        
+
+def retrieveCustomizedsurvey(list):
+    query="""SELECT * FROM SurveyQuestions WHERE id=?"""
+    conn=sqlite3.connect('blog.db')
+    cursor=conn.cursor()
+    
+    questions_list = []
+    try:
+        for item_id in list:
+            cursor.execute(query, (item_id,))
+            question = cursor.fetchone()  # Fetch a single question (assuming ID is unique)
+
+            if question:
+                columns = [column[0] for column in cursor.description]
+                question_dict = dict(zip(columns, question))
+                questions_list.append(question_dict)
+            else:
+                # Handle case where no question is found for a specific ID
+                questions_list.append({'message': f'No question found for ID {item_id}'})
+        
+        if questions_list:
+            return questions_list
+        else:
+            return {'message': 'No questions found for the given IDs'}
+    
+    except sqlite3.Error as e:
+        print('SQLite Error:', e)
+        return {'message': 'Database error occurred'}
+
+def deleteSurveyQuestion(surveyId):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM SurveyQuestions  WHERE  id=?", (surveyId,))
+        conn.commit() 
+    except sqlite3.Error as e:
+        print('Error: ',e)  
+    finally:
+        conn.close()
  

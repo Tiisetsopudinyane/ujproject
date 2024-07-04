@@ -116,17 +116,6 @@ cursor.execute('''
 ''')
 
 cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Campaigns (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            subject TEXT NOT NULL,
-            overview TEXT NOT NULL,
-            funding_goal INTEGER NOT NULL,
-            duration INTEGER NOT NULL,
-            description TEXT NOT NULL
-        )
-    ''')
-
-cursor.execute('''
     CREATE TABLE SurveyQuestions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         question TEXT NOT NULL,

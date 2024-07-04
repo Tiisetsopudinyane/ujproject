@@ -11,6 +11,7 @@
       </div>
     
       <form id="surveyForm" action="/api/create-question" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label for="question">Question:</label>
             <input type="text" id="question" name="question" class="form-control" required>
@@ -39,6 +40,7 @@
         </div>
         
         <button type="submit" class="btn btn-primary">Create Question</button>
+        <a class="btn btn-outline-primary" href="{{url_for('surveyQuestions')}}">Go to Suvery Questions</a>
     </form>
     </div>
     
