@@ -7,19 +7,31 @@
     </a>
   </li>
   <li class="nav-item p-2">
-    <a name="" type="button" class="btn btn-primary" href="{{ url_for('loadmessages') }}"><i
-        class="fas fa-envelope directMessages"></i> Direct
-      Messages</a>
+    <a
+      name=""
+      type="button"
+      class="btn btn-primary"
+      href="{{ url_for('loadmessages') }}"
+      ><i class="fas fa-envelope directMessages"></i> Direct Messages</a
+    >
   </li>
   <li class="nav-item p-2">
-    <a name="createPost_{{ user.user_id }}" type="button" class="btn btn-primary"
-      href="{{ url_for('createNewPost') }}"><i class="fas fa-user-plus"></i>
+    <a
+      name="createPost_{{ user.user_id }}"
+      type="button"
+      class="btn btn-primary"
+      href="{{ url_for('createNewPost') }}"
+      ><i class="fas fa-user-plus"></i>
       Create Post
     </a>
   </li>
   <li class="nav-item p-2">
-    <a type="button" name="logout" class="logout btn btn-primary" href="{{url_for('logout')}}"><i
-        class="fas fa-sign-out-alt"></i>
+    <a
+      type="button"
+      name="logout"
+      class="logout btn btn-primary"
+      href="{{url_for('logout')}}"
+      ><i class="fas fa-sign-out-alt"></i>
       Log-out
     </a>
   </li>
@@ -35,17 +47,26 @@
             <div class="box"></div>
             <div class="image_border">
               {% if not user['images'] %}
-              <img src="../static/images/user.png" class="img-fluid rounded-circle mb-3" alt="User Image" />
+              <img
+                src="../static/images/user.png"
+                class="img-fluid rounded-circle mb-3"
+                alt="User Image"
+              />
               {% else %}
-              <img src="../{{user.images}}" class="img-fluid rounded-circle mb-3" alt="User Image" />
+              <img
+                src="../{{user.images}}"
+                class="img-fluid rounded-circle mb-3"
+                alt="User Image"
+              />
               {% endif %}
               <h4>
-                <a href="{{ url_for('userProfile') }}">{{ user.first_name }} {{ user.last_name }}
-                  <i class="fa fa-pencil-alt edit"></i></a>
+                <a href="{{ url_for('userProfile') }}"
+                  >{{ user.first_name }} {{ user.last_name }}
+                  <i class="fa fa-pencil-alt edit"></i
+                ></a>
               </h4>
             </div>
             <div class="col-md-5 dm_occ">
-
               <p>Occupation: {{ user.occupation }}</p>
             </div>
           </div>
@@ -266,141 +287,231 @@
       <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    let page = 1;
-    const limit = 10;
-    const loadMoreTrigger = document.getElementById('load-more-trigger');
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let page = 1;
+        const limit = 10;
+        const loadMoreTrigger = document.getElementById("load-more-trigger");
 
-    const loadMorePosts = () => {
-        page++;
-        fetch(`/post?page=${page}&limit=${limit}`)
-            .then(response => response.text())
-            .then(data => {
-                // Append new posts to the post container
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                const newPosts = doc.querySelector('.post_container').innerHTML;
-                document.querySelector('.post_container').insertAdjacentHTML('beforeend', newPosts);
+        const loadMorePosts = () => {
+          page++;
+          fetch(`/post?page=${page}&limit=${limit}`)
+            .then((response) => response.text())
+            .then((data) => {
+              // Append new posts to the post container
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(data, "text/html");
+              const newPosts = doc.querySelector(".post_container").innerHTML;
+              document
+                .querySelector(".post_container")
+                .insertAdjacentHTML("beforeend", newPosts);
             });
-    };
+        };
 
-    const observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            loadMorePosts();
-        }
-    }, { threshold: 1.0 });
-
-    observer.observe(loadMoreTrigger);
-});
-
-        function toggleReadMore(id) {
-          var moreText = document.getElementById(id);
-          if (moreText.style.display === "none") {
-            moreText.style.display = "block";
-          } else {
-            moreText.style.display = "none";
-          }
-        }
-
-        (() => {
-          console.log(name);
-          function fetchPostCount(name) {
-            console.log(name);
-            fetch(`/count/${name}`)
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json(); // Assuming the API returns JSON
-              })
-              .then((data) => {
-                if ("count" in data) {
-                  var countSpan = button.querySelector("span");
-                  if (countSpan) {
-                    countSpan.textContent = `(${data.count}) `;
-                  }
-                } else if ("message" in data) {
-                  console.log(data.message);
-                } else {
-                  console.log("Unknown response format");
-                }
-              })
-              .catch((error) => {
-                console.error(
-                  "There was a problem with the fetch operation:",
-                  error
-                );
-              });
-          }
-
-          var buttons = document.querySelectorAll(".gradient-div");
-          // Attach fetchPostCount function to each button's onclick event
-          buttons.forEach((button) => {
-            button.addEventListener("click", function () {
-              console.log("button " + button.getAttribute("name"));
-              fetchPostCount(button.getAttribute("name"));
-            });
-          });
-        })();
-
-        function loadComentsInfinityScrolling(post) {
-          let count = 0;
-          const container = document.getElementsByClassName("postContainer");
-          while (count < post.length) {
-            container.appendChild(post);
-          }
-        }
-
-        var like_icon = document.getElementById("like_icon");
-        var btn_like = document.getElementById("btn_like");
-        var like_text = document.getElementById("like_text");
-        function Togglebtn() {
-          if (like_icon.style.color === "white") {
-            like_icon.style.color = "blue";
-            btn_like.style.backgroundColor = "white";
-            like_text.innerText = "Like";
-            btn_like.style.color = "blue"; // Change text color to blue
-          } else {
-            like_icon.style.color = "white";
-            btn_like.style.backgroundColor = "blue";
-            like_text.innerText = "Liked";
-            btn_like.style.color = "white"; // Change text color to white
-          }
-        }
-
-        async function fetchPosts() {
-          try {
-            const response = await fetch("/loadpost");
-            if (!response.ok) {
-              throw new Error(`Failed to fetch posts: ${response.statusText}`);
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              loadMorePosts();
             }
+          },
+          { threshold: 1.0 }
+        );
+
+        observer.observe(loadMoreTrigger);
+      });
+
+      function toggleReadMore(id) {
+        var moreText = document.getElementById(id);
+        if (moreText.style.display === "none") {
+          moreText.style.display = "block";
+        } else {
+          moreText.style.display = "none";
+        }
+      }
+
+      (() => {
+        console.log(name);
+        function fetchPostCount(name) {
+          console.log(name);
+          fetch(`/count/${name}`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json(); // Assuming the API returns JSON
+            })
+            .then((data) => {
+              if ("count" in data) {
+                var countSpan = button.querySelector("span");
+                if (countSpan) {
+                  countSpan.textContent = `(${data.count}) `;
+                }
+              } else if ("message" in data) {
+                console.log(data.message);
+              } else {
+                console.log("Unknown response format");
+              }
+            })
+            .catch((error) => {
+              console.error(
+                "There was a problem with the fetch operation:",
+                error
+              );
+            });
+        }
+
+        var buttons = document.querySelectorAll(".gradient-div");
+        // Attach fetchPostCount function to each button's onclick event
+        buttons.forEach((button) => {
+          button.addEventListener("click", function () {
+            console.log("button " + button.getAttribute("name"));
+            fetchPostCount(button.getAttribute("name"));
+          });
+        });
+      })();
+
+      function loadComentsInfinityScrolling(post) {
+        let count = 0;
+        const container = document.getElementsByClassName("postContainer");
+        while (count < post.length) {
+          container.appendChild(post);
+        }
+      }
+
+      var like_icon = document.getElementById("like_icon");
+      var btn_like = document.getElementById("btn_like");
+      var like_text = document.getElementById("like_text");
+      function Togglebtn() {
+        if (like_icon.style.color === "white") {
+          like_icon.style.color = "blue";
+          btn_like.style.backgroundColor = "white";
+          like_text.innerText = "Like";
+          btn_like.style.color = "blue"; // Change text color to blue
+        } else {
+          like_icon.style.color = "white";
+          btn_like.style.backgroundColor = "blue";
+          like_text.innerText = "Liked";
+          btn_like.style.color = "white"; // Change text color to white
+        }
+      }
+
+      async function fetchPosts() {
+        try {
+          const response = await fetch("/loadpost");
+          if (!response.ok) {
+            throw new Error(`Failed to fetch posts: ${response.statusText}`);
+          }
+          const data = await response.json();
+          console.log(data);
+          return data;
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+          return [];
+        }
+      }
+
+      // Function to render posts using Handlebars.js
+      async function renderPosts() {
+        const postsContainer = document.getElementById("postsContainer");
+        const postTemplate = document.getElementById("postTemplate").innerHTML;
+
+        // Fetch posts
+        const posts = await fetchPosts();
+
+        // Compile Handlebars template
+        const template = Handlebars.compile(postTemplate);
+
+        const html = template({ posts });
+        postsContainer.innerHTML = html;
+      }
+      const btn_share = document.getElementsByClassName("btn_share");
+
+      for (let i = 0; i < btn_share.length; i++) {
+        btn_share[i].addEventListener("click", handleFormSubmit_share);
+      }
+      
+      async function handleFormSubmit_share(event) {
+        event.preventDefault();
+        const postId = event.target.id.split("_")[1];
+        console.log("post id:", postId);
+        try {
+          const data = await fetchpost(postId);
+          const { title, author, description, media } = data[0];
+      
+          // Create share links dynamically
+          const shareIconContainer = document.getElementById(
+            `shareIcons_${postId}`
+          );
+          if (shareIconContainer) {
+            shareIconContainer.innerHTML = "";
+            const facebookShareLink = document.createElement("a");
+            facebookShareLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+              author
+            )} ${encodeURIComponent(title)} ${encodeURIComponent(description)}`;
+            facebookShareLink.target = "_blank";
+            facebookShareLink.rel = "noopener";
+            facebookShareLink.className = "share-link facebook";
+            facebookShareLink.innerHTML =
+              '<i class="fab fa-facebook"></i> Facebook';
+      
+            const twitterSharLink = document.createElement("a");
+            twitterSharLink.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+              author
+            )} ${encodeURIComponent(title)} ${encodeURIComponent(
+              description
+            )} ${encodeURIComponent(media)}`;
+            twitterSharLink.target = "_blank";
+            twitterSharLink.rel = "noopener";
+            twitterSharLink.className = "share-link twitter";
+            twitterSharLink.innerText = " Twitter";
+      
+            const whatsappShareLink = document.createElement("a");
+            whatsappShareLink.href = `whatsapp://send?text=${title} ${author} ${description}`;
+            whatsappShareLink.target = "_blank";
+            whatsappShareLink.rel = "noopener";
+            whatsappShareLink.className = "share-link whatsapp";
+            whatsappShareLink.innerHTML =
+              '<i class="fab fa-whatsapp"></i> WhatsApp';
+      
+            const linkedInShareLink = document.createElement("a");
+            linkedInShareLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+              author
+            )} ${encodeURIComponent(title)} ${encodeURIComponent(description)}`;
+            linkedInShareLink.target = "_blank";
+            linkedInShareLink.rel = "noopener";
+            linkedInShareLink.className = "share-link linkedin";
+            linkedInShareLink.innerHTML =
+              '<i class="fab fa-linkedin"></i> LinkedIn';
+      
+            shareIconContainer.appendChild(facebookShareLink);
+            shareIconContainer.appendChild(twitterSharLink);
+            shareIconContainer.appendChild(whatsappShareLink);
+            shareIconContainer.appendChild(linkedInShareLink);
+          }
+        } catch (error) {
+          console.error("Error fetching post:", error);
+        }
+      }
+      
+      async function fetchpost(postId) {
+        try {
+          const response = await fetch(`/share/${postId}`);
+          if (!response.ok) {
+            throw new Error(`Error fetching post: ${response.statusText}`);
+          }
+          if (response.headers.get("Content-Type").includes("application/json")) {
             const data = await response.json();
             console.log(data);
             return data;
-          } catch (error) {
-            console.error("Error fetching posts:", error);
-            return [];
           }
+        } catch (error) {
+          console.error("Error fetching post:", error);
+          throw error;
         }
-
-        // Function to render posts using Handlebars.js
-        async function renderPosts() {
-          const postsContainer = document.getElementById("postsContainer");
-          const postTemplate = document.getElementById("postTemplate").innerHTML;
-
-          // Fetch posts
-          const posts = await fetchPosts();
-
-          // Compile Handlebars template
-          const template = Handlebars.compile(postTemplate);
-
-          const html = template({ posts });
-          postsContainer.innerHTML = html;
-        }
-
-        // Render posts when the page loads
-        document.addEventListener("DOMContentLoaded", renderPosts);
-      </script>
-    </div>
-    {% endblock content %}<br>
+      }
+      // Render posts when the page loads
+      document.addEventListener("DOMContentLoaded", renderPosts);
+    </script>
+  </div>
+  {% endblock content %}<br />
+</div>

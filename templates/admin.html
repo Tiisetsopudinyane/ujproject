@@ -1,57 +1,80 @@
 {%extends 'base.html'%}
 {%block content%}
+<br><br><div class="mt-5 indexbar" ></div>
+
+<div class="row">
   <div class="container mt-5">
-    <h1 class="mb-4">Admin Dashboard</h1>
 
-    <div class="row">
-      <div class="col-md-6">
-        <h2>Active Users</h2>
-        <p>Total Active Users:{{ ActiveUser}}</p>
-        <ul>
-          <li>User 1</li>
-          <li>User 2</li>
-          <li>User 3</li>
-          <!-- List of active users -->
-        </ul>
+    <div x-data='{data}'>
+      <div class="row">
+        <h1> Create Your Survey Questions And Answers</h1>
       </div>
-      <div class="col-md-6">
-        <h2>User Management</h2>
-        <form>
-          <div class="mb-3">
-            <label for="userDropdown" class="form-label">Select User to Delete:</label>
-            <select class="form-select" id="userDropdown">
-              <option>User 1</option>
-              <option>User 2</option>
-              <option>User 3</option>
-              <!-- Dropdown options -->
+    
+      <form id="surveyForm" action="/api/create-question" method="post">
+        <div class="form-group">
+            <label for="question">Question:</label>
+            <input type="text" id="question" name="question" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="questionType">Question Type:</label>
+            <select id="questionType" name="questionType" class="form-control" required>
+                <option value="">Select question type</option>
+                <option value="single">Single Choice</option>
+                <option value="multiple">Multiple Choice</option>
+                <option value="custom">Custom Answer</option>
             </select>
-          </div>
-          <button type="submit" class="btn btn-danger">Delete User</button>
-        </form>
-      </div>
+        </div>
+        
+        <div class="form-group" id="choicesGroup">
+            <label id="choicesLabel" for="choices">Choices (comma-separated):</label>
+            <input type="text" id="choices" name="choices" class="form-control">
+            <small class="form-text text-muted">Enter answer choices separated by commas. Required for single or multiple choice.</small>
+        </div>
+        
+        <div class="form-group" id="customAnswerGroup" style="display: none;">
+            <label for="customAnswer">Custom Answer:</label>
+            <input type="text" id="customAnswer" name="customAnswer" class="form-control">
+            <small class="form-text text-muted">Enter a custom answer. Required for custom answer type.</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Create Question</button>
+    </form>
     </div>
-
-    <div class="row mt-5">
-      <div class="col-md-6">
-        <h2>User Activity Tracking</h2>
-        <!-- Page clicks statistics, time spent on each page, session duration -->
-      </div>
-      <div class="col-md-6">
-        <h2>Website Analytics</h2>
-        <p>Total Number of Users: [Number]</p>
-        <p>Bounce Rate: [Percentage]</p>
-      </div>
-    </div>
-
-    <div class="row mt-5">
-      <div class="col">
-        <h2>Social Sharing</h2>
-        <p>Share Analytics: [Link/Button]</p>
-        <!-- Share analytics section -->
-      </div>
-    </div>
+    
   </div>
+ 
+  
+</div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-mrkUmnqaifqJj3g3xi1f/xG1vF//A5HJ5Xy8l10Ib0T+C+2zivvbV/NzWIMy14CL" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Script to show/hide choices or custom answer based on question type selection
+    document.getElementById('questionType').addEventListener('change', function() {
+        var questionType = this.value;
+        var choicesGroup = document.getElementById('choicesGroup');
+        var customAnswerGroup = document.getElementById('customAnswerGroup');
+        var choicesLabel = document.getElementById('choicesLabel');
+
+        // Reset input fields
+        document.getElementById('choices').value = '';
+        document.getElementById('customAnswer').value = '';
+
+        if (questionType === 'single') {
+            choicesGroup.style.display = 'block';
+            choicesLabel.textContent = 'single answer Choice eg: male or female,yes or no (comma-separated):';
+            customAnswerGroup.style.display = 'none';
+        } else if (questionType === 'multiple') {
+            choicesGroup.style.display = 'block';
+            choicesLabel.textContent = 'multiple answer Choices eg: reading, cooking and playing (comma-separated):';
+            customAnswerGroup.style.display = 'none';
+        } else if (questionType === 'custom') {
+            choicesGroup.style.display = 'none';
+            customAnswerGroup.style.display = 'block';
+        } else {
+            choicesGroup.style.display = 'none';
+            customAnswerGroup.style.display = 'none';
+        }
+    });
+</script>
 {%endblock content%}

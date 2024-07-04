@@ -4,7 +4,7 @@ from .user import (updatePassword,sharing,likes_update_table_row,increase_like_c
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,selectAllmessages,countPosts,loadPosts)
+                  ,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 import base64
 import io
 from PIL import Image
@@ -155,6 +155,32 @@ def loadmessages():
     return render_template("inbox.html",messages=messages)
     
 
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+@app.route('/api/create-question', methods=['POST'])
+def create_question():
+    # Get form data from POST request
+    question = request.form.get('question')
+    question_type = request.form.get('questionType')
+    choices = request.form.get('choices')
+    custom_answer = request.form.get('customAnswer')
+
+    # Validate inputs
+    if not question or not question_type:
+        return jsonify({'error': 'Question and Question Type are required'}), 400
+
+    # Handle choices based on question type
+    if question_type == 'custom':
+        survey(question,question_type,choices,custom_answer)
+        choices = None
+    elif question_type == 'single' or question_type == 'multiple':
+        if ',' not in custom_answer:
+            if not choices:
+                return jsonify({'error': 'Choices are required for single or multiple choice questions'}), 400
+            survey(question,question_type,choices,custom_answer)
+            custom_answer = None
 
 
 @app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
@@ -167,7 +193,7 @@ def selectedUserProfile(user_id):
         message = request.form.get("message")
         
         if reply_to:  # Check if it's a reply
-            insertreplyMessages(sender_id, user_id, reply, reply_to)
+            insertreplyMessages(sender_id, user_id, message, reply_to)
         else:
             insertMessages(sender_id, user_id, message)
         return redirect(url_for("post"))
@@ -436,7 +462,7 @@ def like(postid,name):
             count=count+count
     # return count, to check if is one,button must be blue,
     # if count is zero the button color must be white
-    return redirect(url_for('loadposts',name=name))
+    return redirect(url_for('post',name=name))
 
     
 @app.route('/updateUserInfo',methods=['POST'])
@@ -711,4 +737,4 @@ def search():
 
 if __name__ =="__main__":
 
-    app.run(debug=True, port=port)
+    app.run(debug=os.getenv('FLASK_ENV')=='development', port=port)

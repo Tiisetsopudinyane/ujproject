@@ -751,6 +751,7 @@ def share_count(post_id):
         cursor.execute("SELECT count(share) FROM Post WHERE postId=?", (post_id,))
         current_count = cursor.fetchone()
         conn.commit()
+        return current_count
     except sqlite3.Error as e:
         print('Error: ', e)
     finally:
@@ -849,12 +850,12 @@ def sharing(postid):
     finally:
         conn.close()
 
-def insertreplyMessages(sender_id, user_id, reply, replyTo):
+def insertreplyMessages(sender_id, receiverId, reply, replyTo):
     query="""INSERT INTO Reply (senderId, receiverId, reply,replyTo) VALUES (?, ?, ?,?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ senderId, receiverId, reply,replyTo])
+        cursor.execute(query, [ sender_id, receiverId, reply,replyTo])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)
@@ -863,12 +864,12 @@ def insertreplyMessages(sender_id, user_id, reply, replyTo):
 
 
 
-def insertMessages(sender_id, user_id, message):
-    query="""INSERT INTO Messages_replies (sender_id, user_id, message) VALUES ( ?, ?, ?)"""
+def insertMessages(senderId, receiverId, message):
+    query="""INSERT INTO Messages(senderId, receiverId, message) VALUES ( ?, ?, ?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ sender_id, user_id, message])
+        cursor.execute(query, [ senderId, receiverId, message])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)
@@ -997,24 +998,53 @@ def get_suggestions(query):
     return list(unique_results)
 
 
-def get_full_post_content(search,offset=0, limit=10):
+def get_full_post_content(search, offset=0, limit=10):
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
-
-    sql_query = f"SELECT * FROM Post WHERE title = ? ORDER BY post_date DESC, post_time DESC LIMIT ? OFFSET ?"
-    cursor.execute(sql_query,(search,limit, offset))
-    post_content = cursor.fetchall()
-    if post_content:
+    
+    # Get column names except 'media'
+    columns = get_column_names()
+    columns = [column for column in columns if column != 'media']
+    
+    # Constructing the SQL query dynamically to search across all relevant columns
+    sql_query = f"SELECT * FROM Post WHERE "
+    sql_query += " OR ".join([f"{column} LIKE ?" for column in columns])
+    sql_query += " ORDER BY post_date DESC, post_time DESC LIMIT ? OFFSET ?"
+    
+    # Execute the SQL query
+    try:
+        cursor.execute(sql_query, ['%' + search + '%' for _ in columns] + [limit, offset])
+        post_content = cursor.fetchall()
+        
+        if post_content:
             columns = [column[0] for column in cursor.description]
             post_list = []
             for row in post_content:
                 row_dict = dict(zip(columns, row))
                 post_list.append(row_dict)
-                print(post_list)
             return post_list
+        else:
+            print("No posts found matching the search criteria.")
+            return []
+    except sqlite3.Error as e:
+        print(f"Error executing SQLite query: {e}")
+        return []
+    finally:
+        conn.close()
+
+
+
+def survey(question,question_type,choices,custom_answer):
+    conn = sqlite3.connect('blog.db')
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO SurveyQuestions (question, question_type, choices, custom_answer)
+        VALUES (?, ?, ?, ?)
+    """, (question, question_type, choices, custom_answer))
+    conn.commit()
     conn.close()
-    print(post_content)
-    return post_content
+
+    return jsonify({'message': 'Question created successfully'}), 200
 
 
-
+ 
