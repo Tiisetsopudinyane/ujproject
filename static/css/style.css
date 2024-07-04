@@ -516,7 +516,7 @@ width: 100%;
   justify-content: space-around;
 }
 .navbar-light{
-  background-color: #0c1929;
+  background-color: rgb(2, 27, 43);
 }
 .navbar-light img{
   height: max-content;

@@ -274,10 +274,10 @@
     <div class="col-3 col-md-3 col-sm bio-container">
       <div class="funding"><p>funding opportunities</p></div>
             <div class="campaign">
-              {%for funds in fundings%}
+              {%for funds in funds%}
               <h2>{{funds.title}}</h2>
               <p>{{funds.description}}</p>
-              <h5><a class="btn btn-outline-secondary" href="{{funds.link}}" target="_blank">ReadMore</a></h5>
+              <h5><a class="btn btn-outline-primary" href="{{funds.link}}" target="_blank">ReadMore</a></h5>
               <hr>
               {%endfor%}
             </div>
