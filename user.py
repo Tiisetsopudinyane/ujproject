@@ -863,12 +863,12 @@ def insertreplyMessages(sender_id, user_id, reply, replyTo):
 
 
 
-def Messages_replies(senderId, receiverId, reply_message,replyTo):
-    query="""INSERT INTO Messages_replies (senderId, receiverId, reply_message,replyTo) VALUES (?, ?, ?, ?)"""
+def insertMessages(sender_id, user_id, message):
+    query="""INSERT INTO Messages_replies (sender_id, user_id, message) VALUES ( ?, ?, ?)"""
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute(query, [ senderId, receiverId, reply_message,replyTo])
+        cursor.execute(query, [ sender_id, user_id, message])
         conn.commit()        
     except sqlite3.Error as e:
         print('Error: ',e)

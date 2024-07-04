@@ -1,10 +1,10 @@
 from flask import Flask,redirect,url_for,render_template,request,jsonify,session,flash
-from user_validation import matchPassword,encryptdata
-from user import (updatePassword,sharing,likes_update_table_row,increase_like_count,update_likes_delete,decrease_like_count,user_has_liked_post,loadCommentsandUser
+from .user_validation import matchPassword,encryptdata
+from .user import (updatePassword,sharing,likes_update_table_row,increase_like_count,update_likes_delete,decrease_like_count,user_has_liked_post,loadCommentsandUser
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,selectAllmessages,countPosts,loadPosts)
 import base64
 import io
 from PIL import Image
@@ -16,6 +16,7 @@ import json
 from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
+from .webscrapping import fetch_and_parse
 from wtforms import StringField, SubmitField, PasswordField, validators
 from configparser import ConfigParser
 import hashlib
@@ -71,6 +72,7 @@ def deleteProfile_picture():
     
 @app.route("/post")
 def post():
+    fundings=fetch_and_parse()
     counts=countPosts()
     # Get pagination parameters
     page = int(request.args.get('page', 1))
@@ -95,7 +97,7 @@ def post():
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
-    return render_template("post.html",post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+    return render_template("post.html",fundings=fundings,post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
 
     
 @app.route("/loadposts/<string:name>",methods=["GET"])
@@ -678,6 +680,7 @@ def search_suggestions():
 @app.route('/search', methods=["POST","GET"])
 def search():
     search = request.form.get('searchBox')
+    fundings=fetch_and_parse()
     if request.method=="POST":
         # Get pagination parameters
         page = int(request.args.get('page', 1))
@@ -703,7 +706,7 @@ def search():
         userId=session["user_id"]
         userdata=selectAllfromUser_with_Id(userId)
         profileimage = userdata['images']
-        return render_template("post.html",post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+        return render_template("post.html",fundings=fundings,post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
 
 
 if __name__ =="__main__":
