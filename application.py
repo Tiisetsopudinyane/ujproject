@@ -4,7 +4,9 @@ from .user import (updatePassword,sharing,likes_update_table_row,increase_like_c
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
-                  ,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,select_all_campaigns,countPosts,decrease_like_count,insertreplyMessages,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
+                  ,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+from .webscrapping import fetch_and_parse
 import base64
 import io
 from PIL import Image
@@ -16,7 +18,6 @@ import json
 from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
-from .webscrapping import fetch_and_parse
 from wtforms import StringField, SubmitField, PasswordField, validators
 from configparser import ConfigParser
 import hashlib
@@ -72,8 +73,8 @@ def deleteProfile_picture():
     
 @app.route("/post")
 def post():
-    fundings=fetch_and_parse()
     counts=countPosts()
+    funds=fetch_and_parse()
     # Get pagination parameters
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
@@ -90,14 +91,13 @@ def post():
                 media.append(images)
                 for picture_list in media:
                     item['media']=picture_list
-    campaigns = select_all_campaigns()
     if 'user_id' not in session:
         return render_template("login.html")
     
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
-    return render_template("post.html",fundings=fundings,post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+    return render_template("post.html",funds=funds,post=post,counts=counts,user=userdata,profileimage=profileimage)
 
     
 @app.route("/loadposts/<string:name>",methods=["GET"])
@@ -131,22 +131,6 @@ def get_full_post():
     return jsonify(post_content)
 
 
-@app.route('/update_campaign', methods=['GET', 'POST'])
-def update_campaign():
-    if request.method == 'POST':
-        subject = request.form['subject']
-        overview = request.form['overview']
-        funding_goal = request.form['funding_goal']
-        duration = request.form['duration']
-        description = request.form['description']
-        
-        # Here you would add logic to update the campaign information in the database
-        # For example:
-        update_campaign(subject, overview, funding_goal, duration, description)
-        
-        return redirect(url_for('post'))
-    
-    return render_template('update_campaign.html')
 
 @app.route("/loadmessages")
 def loadmessages():
@@ -159,6 +143,8 @@ def loadmessages():
 def admin():
     return render_template("admin.html")
 
+
+
 @app.route('/api/create-question', methods=['POST'])
 def create_question():
     # Get form data from POST request
@@ -166,22 +152,114 @@ def create_question():
     question_type = request.form.get('questionType')
     choices = request.form.get('choices')
     custom_answer = request.form.get('customAnswer')
-
     # Validate inputs
     if not question or not question_type:
         return jsonify({'error': 'Question and Question Type are required'}), 400
 
     # Handle choices based on question type
     if question_type == 'custom':
-        survey(question,question_type,choices,custom_answer)
+        survey(question,question_type,json.dumps(choices),custom_answer)
         choices = None
-    elif question_type == 'single' or question_type == 'multiple':
+    elif question_type == 'single':
         if ',' not in custom_answer:
             if not choices:
                 return jsonify({'error': 'Choices are required for single or multiple choice questions'}), 400
-            survey(question,question_type,choices,custom_answer)
+            choices=choices.split(',')
+            if len(choices)==2:
+                survey(question,question_type,json.dumps(choices),custom_answer)
+                custom_answer = None
+            
+    elif question_type == 'multiple':
+        if ',' not in custom_answer:
+            if not choices:
+                return jsonify({'error': 'Choices are required for single or multiple choice questions'}), 400
+            choices=choices.split(',')
+            survey(question,question_type,json.dumps(choices),custom_answer)
             custom_answer = None
+    return redirect(url_for('admin'))
 
+@app.route("/deletesurveyquestion/<int:id>")
+def deletesurveyquestion(id):
+    deleteSurveyQuestion(id)
+    
+    return redirect(url_for('surveyQuestions'))
+    
+
+@app.route('/submit_survey', methods=['POST'])
+def submit_survey():
+    # Initialize responses dictionary to store form data
+    responses = {}
+
+    # Process the form data
+    for key, value in request.form.items():
+        if key.startswith('choices_'):
+            # For radio buttons (single choice questions)
+            question_id = key.split('_')[1]
+            responses[question_id] = value
+        elif key.startswith('checkedbox_'):
+            # For checkboxes (multiple choice questions)
+            question_id = key.split('_')[1]
+            if question_id not in responses:
+                question_id = key.split('_')[1]
+                responses[question_id] = request.form.getlist(key)
+            else:
+                responses[question_id].extend(request.form.getlist(key))
+        elif key.startswith('opinion_'):
+            # For text inputs (opinion questions)
+            question_id = key.split('_')[1]
+            responses[key] = value
+
+    # Print responses to console (in real application, save to database)
+    print(responses)
+
+    # Redirect to a 'Thank You' page or another route after processing
+    return redirect(url_for('thank_you'))
+
+
+    
+@app.route('/thank_you')
+def thank_you():
+    return "Thank you for submitting the survey!"
+
+
+
+@app.route("/surveyQuestions")
+def surveyQuestions():
+    questions=retrievesurvey()
+    if 'message' in questions:
+        return redirect(url_for('admin'))
+    else:
+        return render_template('surveyquestions.html',questions=questions)
+        
+@app.route('/submit_customized_survey', methods=['POST'])
+def submit_customized_survey():
+    if request.method == 'POST':
+        checked_ids = request.form.get('checked_ids')
+        if checked_ids:
+            
+            checked_ids_list = checked_ids.split(',')
+            checked_ids_list=retrieveCustomizedsurvey(checked_ids_list)
+            choice_s=[]
+            for item in checked_ids_list:
+                if "choices" in item:
+                    choice=item['choices'][1:-1].split(', ')
+                    choice=[s.strip('"') for s in choice]
+                    choice_s.append(choice)
+                    for choice in choice_s:
+                    
+                        item['choices']=choice
+                print('Checked IDs:',type(item['choices']))
+            # Process the list of checked IDs here
+            # print('Checked IDs:',checked_ids_list)
+            # Redirect or render another template as needed
+            return render_template('survey.html',checked_ids_list=checked_ids_list)
+        else:
+            # Handle case where no checkboxes were checked
+            print('No checkboxes were checked')
+            # Redirect or render another template as needed
+
+        # Example: Redirect back to the survey page
+        return redirect(url_for('surveyQuestions'))
 
 @app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
 def selectedUserProfile(user_id):
@@ -201,6 +279,7 @@ def selectedUserProfile(user_id):
     return render_template("selectedUserProfile.html",sender_id=sender_id, user=user, sender_data=sender_data)
 
 
+
 @app.route("/login",methods=["POST","GET"])
 def login():
     if request.method=="POST":
@@ -211,8 +290,7 @@ def login():
         password=encryptdata(password.strip())
         
         user_credentials= loginCredentials(email,password)
-        counts=countPosts()
-        campaigns = select_all_campaigns()
+        
         # counts=jsonify(counts)
         user=selectAllfromUser(email)
         media=[]
@@ -282,11 +360,11 @@ def createAccount():
             password=encryptdata(password.strip())
             insertUserIntodb( firstName, lastName, dob, gender, email, occupation,bio, contact, address, postalCode, password)
             counts=countPosts()
-            campaigns = select_all_campaigns()
+            
             user=selectAllfromUser(email)
             if 'userId' in user:
                 session["user_id"]=user['userId']
-                return render_template("post.html",counts=counts,campaigns=campaigns,user=user)
+                return render_template("post.html",counts=counts,user=user)
         else:
             return render_template("createAccount.html")
 
@@ -318,10 +396,8 @@ def userProfile():
     userdata=selectAllfromUser_with_Id(userId)
     user=selectUserInfo()
     userPosts=get_post(userId)
-    counts=countPosts()
-    campaigns = select_all_campaigns()
     if request.method=='POST':
-        return render_template('post.html',counts=counts,campaigns=campaigns,user=user)
+        return render_template('post.html',user=user)
     else:
         media=[]
         
@@ -706,14 +782,14 @@ def search_suggestions():
 @app.route('/search', methods=["POST","GET"])
 def search():
     search = request.form.get('searchBox')
-    fundings=fetch_and_parse()
+    funds=fetch_and_parse()
     if request.method=="POST":
         # Get pagination parameters
         page = int(request.args.get('page', 1))
         limit = int(request.args.get('limit', 10))
         offset = (page - 1) * limit
         post = get_full_post_content(search,offset=offset, limit=limit)
-        counts=countPosts()
+      
        
         media=[]
         if "message" not in post:
@@ -725,14 +801,15 @@ def search():
                     media.append(images)
                     for picture_list in media:
                         item['media']=picture_list
-        campaigns = select_all_campaigns()
+                        
         if 'user_id' not in session:
             return render_template("login.html")
     
         userId=session["user_id"]
         userdata=selectAllfromUser_with_Id(userId)
         profileimage = userdata['images']
-        return render_template("post.html",fundings=fundings,post=post,counts=counts,campaigns=campaigns,user=userdata,profileimage=profileimage)
+        return render_template("post.html",funds=funds,post=post,user=userdata,profileimage=profileimage)
+
 
 
 if __name__ =="__main__":

@@ -1,25 +1,47 @@
-{%extends "base.html"%}
-{%block content%}
+{% extends "base.html" %}
+{% block content %}
 <br><br><br><div class="mt-5 indexbar" ></div>
 <div class="row">
     <div class="container">
-        {%if checked_ids_list%}
-        {%for item in checked_ids_list%}
-        {%if item.question_type =='single' %}
-        
-        {%elif item.question_type== 'multiple'%}
-        {{item.question}}
-        {%for list in item.choices%}
-        <input class="form-check-input" type="checkbox" name="checked_box" value="{{item.id}}" id="question_{{ item.id }}">
-        <label class="form-check-label" for="question_{{ item.id }}">
-                        </label>
-        {%endfor%}
-        {%else%}
-        {{item.question}}
-        <input type="text" class="form-control" required>
-        {%endif%}
-        {%endfor%}
-        {%endif%}
+        <div class="card">
+            <div class="card-header">
+                <h1>PLEASE FILL THE SURVEY BELOW</h1>
+            </div>
+            <div class="card-body">
+                {% if checked_ids_list %}
+                <form action="{{ url_for('submit_survey') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {% for item in checked_ids_list %}
+                        {% if item.question_type == 'single' %}
+                        <br>
+                        <div class="form-group">
+                            <label for="{{ item.question }}">{{ item.question }}</label>
+                            {% for choice in item.choices %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="choices_{{ item.id }}" id="{{ choice }}{{ item.id }}" value="{{ choice }}">
+                                <label class="form-check-label" for="{{ choice }}{{ item.id }}">{{ choice }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% elif item.question_type == 'multiple' %}
+                        <br>
+                        {{ item.question }}
+                        {% for choice in item.choices %}
+                        <br>
+                        <input class="form-check-input" type="checkbox" name="checkedbox_{{ item.id }}" value="{{ choice }}" id="choice_{{ choice }}{{ item.id }}">
+                        <label class="form-check-label" for="choice_{{ choice }}{{ item.id }}">{{ choice }}</label>
+                        {% endfor %}
+                        {% else %}
+                        <br>
+                        <label for="opinion_{{ item.id }}">{{ item.question }}</label>
+                        <input type="text" id="opinion_{{ item.id }}" class="form-control" name="opinion_{{ item.id }}" required>
+                        {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
-{%endblock%}
+{% endblock %}
