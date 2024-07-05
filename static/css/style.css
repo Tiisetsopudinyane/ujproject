@@ -598,6 +598,20 @@ padding: auto;
 .message{
   width: 80%;
 }
+
+.form-check {
+  position: relative;
+}
+
+.form-check a.btn-outline-primary {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.surveyForm{
+  overflow-y: auto;
+}
 @media only screen and (max-width:320px) {
   .post{
     width: 500px;

@@ -5,7 +5,7 @@ from .user import (updatePassword,sharing,likes_update_table_row,increase_like_c
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
                   ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
-                  ,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 from .webscrapping import fetch_and_parse
 import base64
 import io
@@ -211,7 +211,7 @@ def submit_survey():
 
     # Print responses to console (in real application, save to database)
     print(responses)
-
+    
     # Redirect to a 'Thank You' page or another route after processing
     return redirect(url_for('thank_you'))
 
@@ -229,17 +229,21 @@ def surveyQuestions():
     if 'message' in questions:
         return redirect(url_for('admin'))
     else:
-        return render_template('surveyquestions.html',questions=questions)
+        survey=customSurveys()
+        print(survey)
+        return render_template('surveyquestions.html',questions=questions,survey=survey)
         
 @app.route('/submit_customized_survey', methods=['POST'])
 def submit_customized_survey():
     if request.method == 'POST':
         checked_ids = request.form.get('checked_ids')
+        surveyName=request.form.get('surveyName')
         if checked_ids:
             
             checked_ids_list = checked_ids.split(',')
             checked_ids_list=retrieveCustomizedsurvey(checked_ids_list)
             choice_s=[]
+            
             for item in checked_ids_list:
                 if "choices" in item:
                     choice=item['choices'][1:-1].split(', ')
@@ -248,18 +252,32 @@ def submit_customized_survey():
                     for choice in choice_s:
                     
                         item['choices']=choice
-                print('Checked IDs:',type(item['choices']))
             # Process the list of checked IDs here
             # print('Checked IDs:',checked_ids_list)
             # Redirect or render another template as needed
-            return render_template('survey.html',checked_ids_list=checked_ids_list)
+            insert_survey_name(surveyName,json.dumps(checked_ids_list))
+            return redirect(url_for('surveyQuestions'))
         else:
             # Handle case where no checkboxes were checked
             print('No checkboxes were checked')
             # Redirect or render another template as needed
-
+        
         # Example: Redirect back to the survey page
-        return redirect(url_for('surveyQuestions'))
+    return redirect(url_for('surveyQuestions'))
+
+
+@app.route('/customized_survey/<string:surveyName>')
+def customized_survey(surveyName):
+    customSurveys=custom_Surveys(surveyName)
+    return render_template('survey.html',customSurveys=customSurveys)
+
+
+@app.route('/delete_customized_survey/<int:id>')
+def delete_customized_survey(id):
+    deleteCustomSurveyQuestion(id)
+    return redirect(url_for('surveyQuestions'))
+
+
 
 @app.route("/selectedUserProfile/<int:user_id>", methods=["GET", "POST"])
 def selectedUserProfile(user_id):
@@ -306,6 +324,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+        
         session.clear()
         return render_template("login.html")
 

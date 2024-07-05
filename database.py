@@ -116,17 +116,35 @@ cursor.execute('''
 ''')
 
 cursor.execute('''
-    CREATE TABLE SurveyQuestions (
+    CREATE TABLE IF NOT EXISTS SurveyQuestions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         question TEXT NOT NULL,
         question_type TEXT CHECK(question_type IN ('single', 'multiple', 'custom')) NOT NULL,
-        choices TEXT,
-        custom_answer TEXT
+        choices TEXT
+)
+''')
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS customSurveys(
+        survey_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surveyName TEXT NOT NULL,
+        questions TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 ''')
 
 
-
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS customSurveysAnswers(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        survey_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        answer TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (survey_id) REFERENCES customSurveys(survey_id),
+        FOREIGN KEY (user_id) REFERENCES User(userId)
+)
+''')
 
 
 

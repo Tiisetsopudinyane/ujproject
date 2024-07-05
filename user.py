@@ -1102,14 +1102,79 @@ def retrieveCustomizedsurvey(list):
         print('SQLite Error:', e)
         return {'message': 'Database error occurred'}
 
-def deleteSurveyQuestion(surveyId):
+
+
+def customSurveys():
+    query="""SELECT * FROM customSurveys"""
+    conn=sqlite3.connect('blog.db')
+    cursor=conn.cursor()
+    cursor.execute(query, )
+    custom = cursor.fetchall()
+    customSurveys_list = []
+    try:
+        if custom:
+            for item in custom:
+                columns = [column[0] for column in cursor.description]
+                customSurveys_dict = dict(zip(columns, item))
+                customSurveys_list.append(customSurveys_dict)
+          
+        if customSurveys_list:
+            return customSurveys_list
+        
+    except sqlite3.Error as e:
+        print('SQLite Error:', e)
+        return {'message': 'Database error occurred'}
+
+
+def insert_survey_name(survey_name,questions):
+    conn = sqlite3.connect('blog.db')
+    cur = conn.cursor()
+
+    try:
+        # SQL query to insert surveyName into customSurveys table
+        sql = """
+        INSERT INTO customSurveys (surveyName,questions) 
+        VALUES (?,?)
+        """
+        cur.execute(sql, (survey_name,questions))
+        conn.commit()
+        print("Survey name inserted successfully.")
+
+    except sqlite3.Error as e:
+        print(f"Error inserting survey name: {e}")
+
+    finally:
+        conn.close()
+        
+        
+def custom_Surveys(surveyName):
+    query="""SELECT * FROM customSurveys WHERE surveyName=?"""
+    conn=sqlite3.connect('blog.db')
+    cursor=conn.cursor()
+    cursor.execute(query,(surveyName,) )
+    custom = cursor.fetchall()
+    customSurveys_list = []
+    try:
+        if custom:
+            for item in custom:
+                columns = [column[0] for column in cursor.description]
+                customSurveys_dict = dict(zip(columns, item))
+                customSurveys_list.append(customSurveys_dict)
+            
+        if customSurveys_list:
+            return customSurveys_list
+        
+    except sqlite3.Error as e:
+        print('SQLite Error:', e)
+        return {'message': 'Database error occurred'}
+
+def deleteCustomSurveyQuestion(survey_id):
     conn = sqlite3.connect('blog.db')
     cursor = conn.cursor()
     try:
-        cursor.execute("DELETE FROM SurveyQuestions  WHERE  id=?", (surveyId,))
+        cursor.execute("DELETE FROM customSurveys  WHERE  survey_id=?", (survey_id,))
         conn.commit() 
     except sqlite3.Error as e:
         print('Error: ',e)  
     finally:
         conn.close()
- 
