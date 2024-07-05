@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<br><br><br><div class="mt-5 indexbar" ></div>
+<div class="mt-5 indexbar" ></div>
 <div class="row">
     <div class="container">
         <div class="card">
@@ -8,10 +8,10 @@
                 <h1>PLEASE FILL THE SURVEY BELOW</h1>
             </div>
             <div class="card-body">
-                {% if checked_ids_list %}
+                {% if customSurveys %}
                 <form action="{{ url_for('submit_survey') }}" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    {% for item in checked_ids_list %}
+                    {% for item in customSurveys %}
                         {% if item.question_type == 'single' %}
                         <br>
                         <div class="form-group">

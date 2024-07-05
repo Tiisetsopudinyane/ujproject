@@ -250,10 +250,7 @@ def submit_customized_survey():
                     choice=[s.strip('"') for s in choice]
                     choice_s.append(choice)
                     for choice in choice_s:
-                    
                         item['choices']=choice
-            # Process the list of checked IDs here
-            # print('Checked IDs:',checked_ids_list)
             # Redirect or render another template as needed
             insert_survey_name(surveyName,json.dumps(checked_ids_list))
             return redirect(url_for('surveyQuestions'))
@@ -269,7 +266,13 @@ def submit_customized_survey():
 @app.route('/customized_survey/<string:surveyName>')
 def customized_survey(surveyName):
     customSurveys=custom_Surveys(surveyName)
-    return render_template('survey.html',customSurveys=customSurveys)
+    questions_list = [item for item in customSurveys]
+
+    print(type(questions_list))
+    for item in questions_list:
+        questions_list=item['questions']
+        questions_list=json.loads(questions_list)
+    return render_template('survey.html',customSurveys=questions_list)
 
 
 @app.route('/delete_customized_survey/<int:id>')
