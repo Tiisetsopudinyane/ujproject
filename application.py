@@ -5,7 +5,7 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
                   ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
-                  ,insert_customSurvey_answer,scheduled_task,loadfundings,updateFunding,popup_custom_Surveys,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,All_Surveys,insert_customSurvey_answer,scheduled_task,loadfundings,updateFunding,popup_custom_Surveys,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 # from webscrapping import fetch_and_parse
 import base64
 import io
@@ -212,7 +212,19 @@ def deletesurveyquestion(id):
     deleteSurveyQuestion(id)
     
     return redirect(url_for('surveyQuestions'))
-    
+
+
+@app.route("/answers/<int:id>")
+def answers(id):
+    answers=All_Surveys(id)
+    print(answers)
+    for item in answers:
+        
+        item['answer']=json.loads(item['answer'])
+        print(type(item['answer']))
+    print(answers)
+    return render_template('answers.html',customSurveys=answers)
+   
 
 @app.route('/submit_survey/<int:id>', methods=['POST'])
 def submit_survey(id):

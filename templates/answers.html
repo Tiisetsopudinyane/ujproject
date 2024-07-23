@@ -1,60 +1,64 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="mt-5 indexbar" ></div>
+{% extends "base.html" %} {% block content %}
+<div class="mt-5 indexbar"></div>
 <div class="row">
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <h1>PLEASE FILL THE SURVEY BELOW</h1>
-                
-            </div>
-            <div class="card-body">
-                {% if customSurveys %}
-                
-                <form action="{{ url_for('submit_survey',id=customSurveys[0].id) }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    {% for item in customSurveys %}
-                       
-                        {% if item.question_type == 'single' %}
-                        <br>
-                        <div class="form-group">
-                            <label for="{{ item.question }}">{{ item.question }}</label>
-                            {% for choice in item.choices %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="choices_{{ item.question }}" id="{{ choice }}{{ item.id }}" value="{{ choice }}">
-                                <label class="form-check-label" for="{{ choice }}{{ item.id }}">{{ choice }}</label>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% elif item.question_type == 'multiple' %}
-                        <br>
-                        {{ item.question }}
-                        {% for choice in item.choices %}
-                        <br>
-                        <input class="form-check-input" type="checkbox" name="checkedbox_{{ item.question }}" value="{{ choice }}" id="choice_{{ choice }}{{ item.id }}">
-                        <label class="form-check-label" for="choice_{{ choice }}{{ item.id }}">{{ choice }}</label>
-                        {% endfor %}
-                        {% else %}
-                        <br>
-                        <label for="opinion_{{ item.id }}">{{ item.question }}</label>
-                        <input type="text" id="opinion_{{ item.id }}" class="form-control" name="opinion_{{ item.question }}" required>
-                        {% endif %}
-                        {% endfor %}
-                    <br>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-                
-                {% endif %}
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1>
+          ANSWERS FOR SURVEY-NAME "{{customSurveys[0]['survey_name']|upper}}"
+        </h1>
+      </div>
+      <div class="card-body">
+        {% if customSurveys %}
+        <form
+          action="{{ url_for('submit_survey',id=customSurveys[0].id) }}"
+          method="POST"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          {% for item in customSurveys %}
+          
+          
+          <table>
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Question</th>
+                      <th>Answer</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <td rowspan="{{ item['answer']|length + 1 }}"><h2>NAME: {{ item['user_name'] }}</h2></td>
 
-            </div>
-            <div class="card-body">
+                  {% for key, value in item['answer'].items() %}
+                  
+                      <tr>
+                        
+                          <td>{{ key }}</td>
+                          <td>
+                              {% if value is string %}
+                                  {{ value }}
+                              {% elif value is iterable and not value is string %}
+                                  <ul>
+                                      {% for list_item in value %}
+                                          <li>{{ list_item }}</li>
+                                      {% endfor %}
+                                  </ul>
+                              {% else %}
+                                  {{ value }}
+                              {% endif %}
+                          </td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          
+          <hr />
+      {% endfor %}
+        </form>
 
-            </div>
-        </div>
+        {% endif %}
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

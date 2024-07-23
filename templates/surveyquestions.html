@@ -47,6 +47,7 @@
                                 <a href="{{ url_for('customized_survey', surveyName=item.surveyName) }}"><h4>{{ item.surveyName }}</h4></a>
                                 <span>{{ item.timestamp }}</span>
                             </div>
+                            <a class="btn btn-outline-primary" href="{{ url_for('answers', id=item.id) }}">Survey Answers</a>
                             <a class="btn btn-outline-primary" href="{{ url_for('delete_customized_survey', id=item.id) }}">Delete Survey</a>
                         </div>
                     {% endfor %}

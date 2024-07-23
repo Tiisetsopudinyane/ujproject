@@ -1260,11 +1260,11 @@ def custom_Surveys_name(survey_id):
 
 
 
-def All_Surveys():
-    query="""SELECT * FROM customSurveysAnswers"""
+def All_Surveys(id):
+    query="""SELECT * FROM customSurveysAnswers WHERE id=?"""
     conn=sqlite3.connect('blog.db')
     cursor=conn.cursor()
-    cursor.execute(query,)
+    cursor.execute(query,(id,))
     custom = cursor.fetchall()
    
     customSurveys_list = []
@@ -1286,7 +1286,7 @@ def All_Surveys():
         return {'message': 'Database error occurred'}
 
 
-print(All_Surveys())
+
 
 
 
