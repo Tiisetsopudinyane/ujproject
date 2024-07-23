@@ -1,12 +1,12 @@
 from flask import Flask,redirect,url_for,render_template,request,jsonify,session,flash
-from .user_validation import matchPassword,encryptdata
-from .user import (updatePassword,sharing,likes_update_table_row,increase_like_count,update_likes_delete,decrease_like_count,user_has_liked_post,loadCommentsandUser
+from user_validation import matchPassword,encryptdata
+from user import (updatePassword,sharing,likes_update_table_row,increase_like_count,update_likes_delete,decrease_like_count,user_has_liked_post,loadCommentsandUser
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
                   ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
                   ,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
-from .webscrapping import fetch_and_parse
+from webscrapping import fetch_and_parse
 import base64
 import io
 from PIL import Image
