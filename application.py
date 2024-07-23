@@ -5,11 +5,10 @@ from user import (updatePassword,sharing,likes_update_table_row,increase_like_co
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
                   ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
-                  ,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
+                  ,insert_customSurvey_answer,scheduled_task,loadfundings,updateFunding,popup_custom_Surveys,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
 # from webscrapping import fetch_and_parse
 import base64
 import io
-from fundings import scheduled_task,loadfundings,updateFunding
 from datafile import data
 from PIL import Image
 import cv2
@@ -166,7 +165,14 @@ def loadmessages():
 def admin():
     return render_template("admin.html")
 
-
+@app.route('/home')
+def home():
+    survey=popup_custom_Surveys()
+    print("survey ",survey)
+    for item in survey:
+        survey=item['questions']
+        survey=json.loads(survey)
+    return render_template('survey.html',customSurveys=survey)
 
 @app.route('/api/create-question', methods=['POST'])
 def create_question():
@@ -208,11 +214,12 @@ def deletesurveyquestion(id):
     return redirect(url_for('surveyQuestions'))
     
 
-@app.route('/submit_survey', methods=['POST'])
-def submit_survey():
+@app.route('/submit_survey/<int:id>', methods=['POST'])
+def submit_survey(id):
     # Initialize responses dictionary to store form data
     responses = {}
-
+    userId=session["user_id"]
+    id=id
     # Process the form data
     for key, value in request.form.items():
         if key.startswith('choices_'):
@@ -230,8 +237,8 @@ def submit_survey():
         elif key.startswith('opinion_'):
             # For text inputs (opinion questions)
             question_id = key.split('_')[1]
-            responses[key] = value
-    
+            responses[question_id] = value
+    insert_customSurvey_answer(id,userId,json.dumps(responses))
     # Redirect to a 'Thank You' page or another route after processing
     return redirect(url_for('thank_you'))
 

@@ -69,6 +69,28 @@ cursor.execute('''
     )
 ''')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS fundings (
+        id INTEGER PRIMARY KEY,
+        public_private TEXT,
+        type_of_source TEXT,
+        name_of_source TEXT,
+        type_of_disbursement_channel TEXT,
+        name_of_disbursement_channel TEXT,
+        name_of_funding_opportunity TEXT,
+        financial_instrument TEXT,
+        size_of_investment TEXT,
+        investment_opportunity_info TEXT,
+        direct_use TEXT,
+        sectors TEXT,
+        fund_contact_name TEXT,
+        fund_contact_email TEXT,
+        fund_contact_number TEXT,
+        fund_contact_website TEXT
+    )
+''')
+
+
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Likes (
@@ -126,7 +148,7 @@ cursor.execute('''
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS customSurveys(
-        survey_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         surveyName TEXT NOT NULL,
         questions TEXT NOT NULL,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -137,12 +159,11 @@ cursor.execute('''
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS customSurveysAnswers(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        survey_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
+        survey_name TEXT NOT NULL,
+        user_name TEXT NOT NULL,
         answer TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (survey_id) REFERENCES customSurveys(survey_id),
-        FOREIGN KEY (user_id) REFERENCES User(userId)
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        
 )
 ''')
 

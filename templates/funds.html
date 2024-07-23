@@ -1,6 +1,37 @@
 {%extends "base.html"%}
+{% block buttons %}
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item p-2">
+      <a 
+       name=""
+       type="buttton"
+       class="btn btn-primary"
+       href="{{ url_for('home') }}"
+      >
+       <i class="fas fa-home"></i>
+       Home
+      </a>
+     </li>
+     <li class="nav-item p-2">
+       <a
+       name=""
+       type="button"
+       class="btn btn-primary"
+       href="{{ url_for('loadmessages') }}"
+       ><i class="fas fa-envelope directMessages"></i> Direct
+       Messages</a
+     >
+     </li>
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('post') }}"><i class="fas fa-arrow-left"></i>Go Back</a>
+    </li>
+    <li class="nav-item p-2">
+      <a class="btn btn-primary" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+    </li>
+  </ul>
+{% endblock buttons %}
 {%block content%}
-<br><br>
+
 <div class="row">
     <div class="container">
         <div class="card">
@@ -8,7 +39,7 @@
                 <h3>Funding Opportunities</h3>
             </div>
             <div class="card-body">
-            <div class="campaign p -5">
+            <div class="campaign p-5">
               {%for funds in funds%}
               <h2>{{funds.sectors}}</h2>
               <h4>{{funds.fund_contact_name}}</h4>
