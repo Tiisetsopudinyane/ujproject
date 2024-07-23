@@ -1,0 +1,32 @@
+{%extends "base.html"%}
+{%block content%}
+<br><br>
+<div class="row">
+    <div class="container">
+        <div class="card">
+            <div class="card-header funding">
+                <h3>Funding Opportunities</h3>
+            </div>
+            <div class="card-body">
+            <div class="campaign p -5">
+              {%for funds in funds%}
+              <h2>{{funds.sectors}}</h2>
+              <h4>{{funds.fund_contact_name}}</h4>
+              <p>{{funds.type_of_source}}</p>
+              <!-- <h5><a class="btn btn-outline-primary" href="{{funds.link}}" target="_blank">ReadMore</a></h5> -->
+              <p>{{funds.investment_opportunity_info}}</p>
+              <p>{{funds.name_of_funding_opportunity}}</p>
+              <p>{{funds.size_of_investment}}</p>
+              <p>{{funds.fund_contact_email}}</p>
+              <a class="btn btn-outline-primary" href="{{funds.fund_contact_website}}" target="_blank">Web Link</a>
+              <hr>
+              {%endfor%}
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+      
+     
+{%endblock%}

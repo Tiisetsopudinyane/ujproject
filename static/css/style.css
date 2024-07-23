@@ -153,7 +153,7 @@ float: left;
     color: #007bff;
   }
 .card-edit{
-  width:600px;
+  width:800px;
 }
 .fixed-width-card {
     width: 100%; /* You can set a fixed width like 300px or use 100% for responsive width */
@@ -235,7 +235,7 @@ float: left;
 .content-container {
   box-sizing: border-box;
   margin: 0 auto; /* Center the card horizontally */
-  width: 450px ; /* Adjust the width as needed */
+  width: 100% ; /* Adjust the width as needed */
 }
 .swiper-wrapper{
   width: max-content;

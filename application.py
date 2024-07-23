@@ -1,14 +1,16 @@
 from flask import Flask,redirect,url_for,render_template,request,jsonify,session,flash
-from .user_validation import matchPassword,encryptdata
-from .user import (updatePassword,sharing,likes_update_table_row,increase_like_count,update_likes_delete,decrease_like_count,user_has_liked_post,loadCommentsandUser
+from user_validation import matchPassword,encryptdata
+from user import (updatePassword,sharing,likes_update_table_row,increase_like_count,update_likes_delete,decrease_like_count,user_has_liked_post,loadCommentsandUser
                   ,loadComments,insert_comment,updateMedia,updateDescription,updateTitle,get_one_post,deletelikes,deletereplies,deletecomments,deleteshare
                   ,deletepost,get_post,retrieve_media,activeusers,loadPosts,insertUserIntodb,loginCredentials,selectAllfromUser_with_Id,emailExists
                   ,selectAllfromUser,insertBio,insertOccupation,insertContact,insertAddress,insertPostal,insertInterests,insertImage,insertPost,user_has_liked_post
                   ,retrievesurvey,survey,get_full_post_content,get_suggestions,load_Posts,delete_profile_picture,insert_share,countPosts,decrease_like_count,insertreplyMessages
                   ,deleteCustomSurveyQuestion,custom_Surveys,customSurveys,insert_survey_name,customSurveys,retrieveCustomizedsurvey,deleteSurveyQuestion,increase_like_count,selectAllmessages,insertMessages,selectAllmessages,countPosts,loadPosts)
-from .webscrapping import fetch_and_parse
+# from webscrapping import fetch_and_parse
 import base64
 import io
+from fundings import scheduled_task,loadfundings,updateFunding
+from datafile import data
 from PIL import Image
 import cv2
 import os
@@ -25,6 +27,8 @@ import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
+import schedule
+from datetime import datetime, timedelta
 
 
 
@@ -58,7 +62,6 @@ port = int(os.environ.get('FLASK_RUN_PORT', 8000))
 @app.route("/",methods=["POST","GET"])
 
 def homePage():
-    
     return render_template("login.html") 
 
    
@@ -70,11 +73,30 @@ def deleteProfile_picture():
     delete_profile_picture_from_file(image)
     return redirect(url_for("post"))
     
+@app.route("/funds",methods=["POST","GET"])
+def funds():
+    userId=session["user_id"]
+    funds=loadfundings()
+    return render_template("funds.html",funds=funds)
+
+
+@app.route('/save_data', methods=['GET','POST'])
+def api_save_data():
+    if not data:
+        return jsonify({"error": "Invalid data"}), 400
+    try:
+        
+        updateFunding(data)
+        print(data)
+        return jsonify({"message": "Data saved successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+  
     
 @app.route("/post")
 def post():
     counts=countPosts()
-    funds=fetch_and_parse()
+    
     # Get pagination parameters
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
@@ -97,7 +119,7 @@ def post():
     userId=session["user_id"]
     userdata=selectAllfromUser_with_Id(userId)
     profileimage = userdata['images']
-    return render_template("post.html",funds=funds,post=post,counts=counts,user=userdata,profileimage=profileimage)
+    return render_template("post.html",post=post,counts=counts,user=userdata,profileimage=profileimage)
 
     
 @app.route("/loadposts/<string:name>",methods=["GET"])
@@ -208,9 +230,6 @@ def submit_survey():
             # For text inputs (opinion questions)
             question_id = key.split('_')[1]
             responses[key] = value
-
-    # Print responses to console (in real application, save to database)
-    print(responses)
     
     # Redirect to a 'Thank You' page or another route after processing
     return redirect(url_for('thank_you'))
@@ -804,7 +823,7 @@ def search_suggestions():
 @app.route('/search', methods=["POST","GET"])
 def search():
     search = request.form.get('searchBox')
-    funds=fetch_and_parse()
+    funds=loadfundings()
     if request.method=="POST":
         # Get pagination parameters
         page = int(request.args.get('page', 1))
@@ -833,7 +852,7 @@ def search():
         return render_template("post.html",funds=funds,post=post,user=userdata,profileimage=profileimage)
 
 
-
 if __name__ =="__main__":
 
     app.run(debug=os.getenv('FLASK_ENV')=='development', port=port)
+    
