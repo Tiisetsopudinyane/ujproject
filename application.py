@@ -29,7 +29,7 @@ from email.mime.multipart import MIMEMultipart
 import smtplib
 import schedule
 from datetime import datetime, timedelta
-
+from datafile import data
 
 
 
@@ -62,6 +62,7 @@ port = int(os.environ.get('FLASK_RUN_PORT', 8000))
 @app.route("/",methods=["POST","GET"])
 
 def homePage():
+    updateFunding(data)
     return render_template("login.html") 
 
    
