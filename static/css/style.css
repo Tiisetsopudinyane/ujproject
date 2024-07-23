@@ -83,6 +83,7 @@ body {
   .card{
     margin-top: 15%;
     border-radius:15px;
+    width:100% ;
   }
   
 .nav_header{
@@ -209,7 +210,10 @@ float: left;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 500px;
+}
+
+.post_container .search{
+  display: flex;
 }
 .center-post-container{
   display: block;
@@ -220,7 +224,7 @@ float: left;
   width: 100%;
 }
 .post{
-  width: 500px;
+  width: 800px;
   height: 900px;
   overflow-y: auto; /* Use auto to only show scrollbars when necessary */
   overflow-x: hidden;
@@ -373,8 +377,8 @@ width: 100%;
 }
 
 .swiper-slide {
-  width: 353.6px; /* Double the width */
-  height: 250px; /* Double the height */
+  width: 640px;
+  height: 550px;
   position: relative;
   overflow: hidden;
   margin:auto 35px;
