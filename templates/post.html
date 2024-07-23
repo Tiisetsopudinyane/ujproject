@@ -75,15 +75,15 @@
           <p>Bio: {{ user.bio }}</p>
         </div>
       </div>
-        <div class="row">
+        <div class="row m-2">
           <div class="container center-post-container">
             <div class="post_container">
         
-              <div class="row">
-                  <div class="container">
+              <div class="row search">
+                  <div class="container searchSection col-md-8">
                     <form action="/search" method="post">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <div class="input-group">
+                      <div class="input-group ">
                           <input name="searchBox" type="text" id="searchInput" onkeyup="fetchSuggestions()" class="form-control" placeholder="Search...">
                           
                           <div class="input-group-append">
@@ -99,6 +99,9 @@
                     </form>
                       <div id="suggestionsBox"></div>
                       <div id="post-content"></div>
+                  </div>
+                  <div class="container btnFunding col-md-2">
+                    <a href="/funds" class="btn btn-outline-primary">Funding</a>
                   </div>
               </div>
           
@@ -271,18 +274,7 @@
             </div>
         </div>
         
-    <div class="col-3 col-md-3 col-sm bio-container">
-      <div class="funding"><p>FUNDING OPPORTUNITIES</p></div>
-            <div class="campaign">
-              {%for funds in funds%}
-              <h2>{{funds.title}}</h2>
-              <p>{{funds.description}}</p>
-              <h5><a class="btn btn-outline-primary" href="{{funds.link}}" target="_blank">ReadMore</a></h5>
-              <hr>
-              {%endfor%}
-            </div>
-
-      </div>
+    
       <div class="mt-5"></div>
       <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
